@@ -12,7 +12,6 @@ document.addEventListener('DOMContentLoaded', () => {
     tariff: 3800
   }
 
-  // Bind option buttons
   const bind = (containerId, key) => {
     const container = document.getElementById(containerId)
     if (!container) return
@@ -35,7 +34,6 @@ document.addEventListener('DOMContentLoaded', () => {
   bind('openType', 'open')
   bind('windowTariff', 'tariff')
 
-  // Color buttons
   document.getElementById('windowColor')?.querySelectorAll('.color-btn').forEach(btn => {
     btn.addEventListener('click', () => {
       document.querySelectorAll('.color-btn').forEach(b => b.classList.remove('active'))
@@ -46,7 +44,6 @@ document.addEventListener('DOMContentLoaded', () => {
     })
   })
 
-  // Range sliders
   const widthSlider = document.getElementById('windowWidth')
   const heightSlider = document.getElementById('windowHeight')
   const widthVal = document.getElementById('widthVal')
@@ -71,104 +68,199 @@ document.addEventListener('DOMContentLoaded', () => {
     if (state.type === 'double') multiplier = 1.3
     if (state.type === 'triple') multiplier = 1.7
     if (state.type === 'balcony') multiplier = 1.5
-
     if (state.colorName !== 'white') multiplier *= 1.15
-
     const price = Math.round(area * state.tariff * multiplier)
     document.getElementById('configPrice').textContent = price.toLocaleString('ru') + ' ₽'
   }
 
   function render() {
-    const pad = 20
-    const frame = 15
-    const vb = svg.viewBox.baseVal
-    const W = 400, H = 500
-
-    // Adjust viewBox ratio based on dimensions
     const ratio = state.width / state.height
-    const newW = ratio >= 1 ? 400 : Math.round(500 * ratio)
-    const newH = ratio >= 1 ? Math.round(400 / ratio) : 500
-    svg.setAttribute('viewBox', `0 0 ${newW} ${newH}`)
+    const newW = ratio >= 1 ? 440 : Math.round(540 * ratio)
+    const newH = ratio >= 1 ? Math.round(440 / ratio) : 540
+    const totalW = newW + 60  // место для откосов
+    const totalH = newH + 80  // место для подоконника
+    svg.setAttribute('viewBox', `0 0 ${totalW} ${totalH}`)
 
     const isWhite = state.colorName === 'white'
     const frameColor = isWhite ? '#E8E8E8' : state.color
-    const frameDark = isWhite ? '#D0D0D0' : darken(state.color, 30)
-    const glassColor = '#B8D9F0'
-    const glassBg = '#D4EAFF'
+    const frameDark = isWhite ? '#CCCCCC' : darken(state.color, 35)
+    const frameLight = isWhite ? '#FFFFFF' : lighten(state.color, 25)
+    const frameMid = isWhite ? '#D8D8D8' : darken(state.color, 15)
+
+    const ox = 30  // offset для откосов
+    const oy = 20
+    const pad = 16
+    const frame = 14
 
     let html = ''
 
-    // Outer frame shadow
+    // --- DEFS ---
     html += `<defs>
       <linearGradient id="frameFill" x1="0" y1="0" x2="1" y2="1">
-        <stop offset="0%" stop-color="${lighten(frameColor, 20)}"/>
-        <stop offset="100%" stop-color="${frameColor}"/>
+        <stop offset="0%" stop-color="${frameLight}"/>
+        <stop offset="50%" stop-color="${frameColor}"/>
+        <stop offset="100%" stop-color="${frameMid}"/>
       </linearGradient>
-      <linearGradient id="glassFill" x1="0" y1="0" x2="0" y2="1">
-        <stop offset="0%" stop-color="#C5E3F6"/>
-        <stop offset="60%" stop-color="#D4EAFF"/>
-        <stop offset="100%" stop-color="#B0D4F1"/>
+      <linearGradient id="frameInner" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0%" stop-color="${frameLight}"/>
+        <stop offset="100%" stop-color="${frameDark}"/>
       </linearGradient>
-      <filter id="shadow">
-        <feDropShadow dx="0" dy="4" stdDeviation="8" flood-color="rgba(0,0,0,.15)"/>
+      <linearGradient id="glassFill" x1="0.2" y1="0" x2="0.8" y2="1">
+        <stop offset="0%" stop-color="#C0E0F8"/>
+        <stop offset="30%" stop-color="#D6EEFF"/>
+        <stop offset="70%" stop-color="#C8E4FA"/>
+        <stop offset="100%" stop-color="#A8D0EC"/>
+      </linearGradient>
+      <linearGradient id="glassShine" x1="0" y1="0" x2="1" y2="1">
+        <stop offset="0%" stop-color="rgba(255,255,255,.45)"/>
+        <stop offset="40%" stop-color="rgba(255,255,255,.08)"/>
+        <stop offset="100%" stop-color="rgba(255,255,255,0)"/>
+      </linearGradient>
+      <linearGradient id="slopLeft" x1="1" y1="0" x2="0" y2="0">
+        <stop offset="0%" stop-color="#E8E8E8"/>
+        <stop offset="100%" stop-color="#D0D0D0"/>
+      </linearGradient>
+      <linearGradient id="slopRight" x1="0" y1="0" x2="1" y2="0">
+        <stop offset="0%" stop-color="#E8E8E8"/>
+        <stop offset="100%" stop-color="#D0D0D0"/>
+      </linearGradient>
+      <linearGradient id="slopTop" x1="0" y1="1" x2="0" y2="0">
+        <stop offset="0%" stop-color="#E8E8E8"/>
+        <stop offset="100%" stop-color="#D5D5D5"/>
+      </linearGradient>
+      <linearGradient id="sillTop" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0%" stop-color="${frameLight}"/>
+        <stop offset="100%" stop-color="${frameMid}"/>
+      </linearGradient>
+      <linearGradient id="sillFront" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0%" stop-color="${frameMid}"/>
+        <stop offset="100%" stop-color="${frameDark}"/>
+      </linearGradient>
+      <filter id="softShadow">
+        <feDropShadow dx="0" dy="6" stdDeviation="10" flood-color="rgba(0,0,0,.18)"/>
+      </filter>
+      <filter id="innerGlow">
+        <feGaussianBlur in="SourceAlpha" stdDeviation="2" result="blur"/>
+        <feOffset dx="0" dy="1" result="off"/>
+        <feFlood flood-color="rgba(0,0,0,.1)" result="color"/>
+        <feComposite in="color" in2="off" operator="in" result="shadow"/>
+        <feMerge><feMergeNode in="shadow"/><feMergeNode in="SourceGraphic"/></feMerge>
       </filter>
     </defs>`
 
-    // Main frame
-    html += `<rect x="${pad}" y="${pad}" width="${newW - pad*2}" height="${newH - pad*2}" rx="4" fill="url(#frameFill)" stroke="${frameDark}" stroke-width="2" filter="url(#shadow)"/>`
+    const winX = ox + pad
+    const winY = oy + pad
+    const winW = newW - pad * 2
+    const winH = newH - pad * 2
 
-    const innerX = pad + frame
-    const innerY = pad + frame
-    const innerW = newW - (pad + frame) * 2
-    const innerH = newH - (pad + frame) * 2
+    // --- ОТКОСЫ (slopes) ---
+    // Верхний откос (трапеция)
+    html += `<polygon points="${ox - 10},${oy - 8} ${ox + newW + 10},${oy - 8} ${ox + newW},${oy} ${ox},${oy}" fill="url(#slopTop)" stroke="#C8C8C8" stroke-width="0.5"/>`
 
-    // Draw panes based on type
+    // Левый откос (трапеция)
+    html += `<polygon points="${ox - 10},${oy - 8} ${ox},${oy} ${ox},${oy + newH} ${ox - 10},${oy + newH + 8}" fill="url(#slopLeft)" stroke="#C8C8C8" stroke-width="0.5"/>`
+
+    // Правый откос (трапеция)
+    html += `<polygon points="${ox + newW + 10},${oy - 8} ${ox + newW},${oy} ${ox + newW},${oy + newH} ${ox + newW + 10},${oy + newH + 8}" fill="url(#slopRight)" stroke="#C8C8C8" stroke-width="0.5"/>`
+
+    // Тень от откосов на стену (лёгкая)
+    html += `<rect x="${ox - 12}" y="${oy - 10}" width="${newW + 24}" height="${newH + 20}" rx="2" fill="none" stroke="rgba(0,0,0,.06)" stroke-width="3"/>`
+
+    // --- РАМА ОСНОВНАЯ ---
+    html += `<rect x="${ox}" y="${oy}" width="${newW}" height="${newH}" rx="3" fill="url(#frameFill)" stroke="${frameDark}" stroke-width="1.5" filter="url(#softShadow)"/>`
+
+    // Внутренний бортик рамы (3D-эффект)
+    html += `<rect x="${ox + 2}" y="${oy + 2}" width="${newW - 4}" height="${newH - 4}" rx="2" fill="none" stroke="${frameLight}" stroke-width="1" opacity=".6"/>`
+    html += `<rect x="${ox + pad - 1}" y="${oy + pad - 1}" width="${winW + 2}" height="${winH + 2}" rx="1" fill="none" stroke="${frameDark}" stroke-width="1" opacity=".4"/>`
+
+    // --- СТЕКЛОПАКЕТЫ ---
+    const innerX = ox + pad + frame
+    const innerY = oy + pad + frame
+    const innerW = winW - frame * 2
+    const innerH = winH - frame * 2
     const panes = getPanes(state.type, innerX, innerY, innerW, innerH)
 
-    panes.forEach((pane, i) => {
-      // Glass
-      html += `<rect x="${pane.x}" y="${pane.y}" width="${pane.w}" height="${pane.h}" rx="2" fill="url(#glassFill)" stroke="${frameDark}" stroke-width="1.5"/>`
+    panes.forEach(pane => {
+      // Створка (внутренняя рама)
+      html += `<rect x="${pane.x - frame}" y="${pane.y - frame}" width="${pane.w + frame * 2}" height="${pane.h + frame * 2}" rx="2" fill="url(#frameInner)" stroke="${frameDark}" stroke-width="1"/>`
 
-      // Glass reflection
-      html += `<rect x="${pane.x + 8}" y="${pane.y + 8}" width="${pane.w * .3}" height="${pane.h * .7}" rx="2" fill="rgba(255,255,255,.25)"/>`
+      // Бортик створки
+      html += `<rect x="${pane.x - frame + 2}" y="${pane.y - frame + 2}" width="${pane.w + frame * 2 - 4}" height="${pane.h + frame * 2 - 4}" rx="1" fill="none" stroke="${frameLight}" stroke-width=".8" opacity=".5"/>`
 
-      // Open type indicator
+      // Стекло
+      html += `<rect x="${pane.x}" y="${pane.y}" width="${pane.w}" height="${pane.h}" rx="1" fill="url(#glassFill)" stroke="${frameDark}" stroke-width="1" filter="url(#innerGlow)"/>`
+
+      // Блик на стекле — диагональная полоса
+      const shineW = pane.w * 0.25
+      html += `<polygon points="${pane.x + 6},${pane.y + 4} ${pane.x + 6 + shineW},${pane.y + 4} ${pane.x + 6 + shineW * 0.4},${pane.y + pane.h * 0.75} ${pane.x + 6},${pane.y + pane.h * 0.75}" fill="url(#glassShine)" opacity=".7"/>`
+
+      // Маленький блик сверху
+      html += `<ellipse cx="${pane.x + pane.w * 0.7}" cy="${pane.y + pane.h * 0.15}" rx="${pane.w * 0.08}" ry="${pane.h * 0.04}" fill="rgba(255,255,255,.35)"/>`
+
+      // Индикатор открывания
       if (!pane.fixed) {
         const openType = pane.openOverride || state.open
-        drawOpenIndicator(pane, openType)
+        drawOpenIndicator(pane, openType, frameDark)
       }
 
-      // Handle
+      // Ручка
       if (!pane.fixed) {
-        const hx = pane.handleSide === 'left' ? pane.x + 10 : pane.x + pane.w - 14
-        const hy = pane.y + pane.h / 2 - 15
-        html += `<rect x="${hx}" y="${hy}" width="4" height="30" rx="2" fill="${frameDark}" opacity=".7"/>`
+        drawHandle(pane, frameDark, frameMid, frameLight)
       }
     })
 
-    // Frame inner border
-    html += `<rect x="${pad + 3}" y="${pad + 3}" width="${newW - (pad+3)*2}" height="${newH - (pad+3)*2}" rx="3" fill="none" stroke="${lighten(frameColor, 30)}" stroke-width="1" opacity=".5"/>`
+    // --- ПОДОКОННИК (3D) ---
+    const sillY = oy + newH
+    const sillOverhang = 20
+    const sillDepth = 14
+    const sillFrontH = 10
+    const sillX = ox - sillOverhang
+    const sillW = newW + sillOverhang * 2
 
-    // Sill
-    html += `<rect x="${pad - 8}" y="${newH - pad}" width="${newW - pad*2 + 16}" height="8" rx="2" fill="${frameColor}" stroke="${frameDark}" stroke-width="1"/>`
+    // Верхняя плоскость подоконника
+    html += `<polygon points="${sillX + 6},${sillY} ${sillX + sillW - 6},${sillY} ${sillX + sillW},${sillY + sillDepth} ${sillX},${sillY + sillDepth}" fill="url(#sillTop)" stroke="${frameDark}" stroke-width="0.8"/>`
+
+    // Передняя грань подоконника
+    html += `<rect x="${sillX}" y="${sillY + sillDepth}" width="${sillW}" height="${sillFrontH}" rx="1" fill="url(#sillFront)" stroke="${frameDark}" stroke-width="0.5"/>`
+
+    // Блик на подоконнике
+    html += `<rect x="${sillX + 10}" y="${sillY + 2}" width="${sillW * 0.4}" height="${sillDepth - 4}" rx="1" fill="rgba(255,255,255,.25)"/>`
+
+    // Капельник (нижний край)
+    html += `<line x1="${sillX + 2}" y1="${sillY + sillDepth + sillFrontH}" x2="${sillX + sillW - 2}" y2="${sillY + sillDepth + sillFrontH}" stroke="${frameDark}" stroke-width="1.5" stroke-linecap="round"/>`
+
+    // Тень под подоконником
+    html += `<ellipse cx="${ox + newW / 2}" cy="${sillY + sillDepth + sillFrontH + 6}" rx="${sillW * 0.42}" ry="4" fill="rgba(0,0,0,.08)"/>`
 
     svg.innerHTML = html
 
-    function drawOpenIndicator(pane, type) {
+    function drawOpenIndicator(pane, type, color) {
       const cx = pane.x + pane.w / 2
-      const cy = pane.y + pane.h / 2
-
       if (type === 'tilt-turn') {
-        // Triangle from bottom center to top corners
-        html += `<line x1="${pane.x + 4}" y1="${pane.y + 4}" x2="${cx}" y2="${pane.y + pane.h - 4}" stroke="${frameDark}" stroke-width="1" stroke-dasharray="6 4" opacity=".4"/>`
-        html += `<line x1="${pane.x + pane.w - 4}" y1="${pane.y + 4}" x2="${cx}" y2="${pane.y + pane.h - 4}" stroke="${frameDark}" stroke-width="1" stroke-dasharray="6 4" opacity=".4"/>`
-        // Horizontal line for tilt
-        html += `<line x1="${pane.x + 4}" y1="${cy}" x2="${pane.x + pane.w - 4}" y2="${cy}" stroke="${frameDark}" stroke-width="1" stroke-dasharray="4 4" opacity=".25"/>`
+        html += `<line x1="${pane.x + 4}" y1="${pane.y + 4}" x2="${cx}" y2="${pane.y + pane.h - 4}" stroke="${color}" stroke-width="1" stroke-dasharray="6 4" opacity=".3"/>`
+        html += `<line x1="${pane.x + pane.w - 4}" y1="${pane.y + 4}" x2="${cx}" y2="${pane.y + pane.h - 4}" stroke="${color}" stroke-width="1" stroke-dasharray="6 4" opacity=".3"/>`
+        html += `<line x1="${pane.x + 4}" y1="${pane.y + pane.h / 2}" x2="${pane.x + pane.w - 4}" y2="${pane.y + pane.h / 2}" stroke="${color}" stroke-width="1" stroke-dasharray="4 4" opacity=".2"/>`
       } else if (type === 'turn') {
-        html += `<line x1="${pane.x + 4}" y1="${pane.y + 4}" x2="${cx}" y2="${pane.y + pane.h - 4}" stroke="${frameDark}" stroke-width="1" stroke-dasharray="6 4" opacity=".4"/>`
-        html += `<line x1="${pane.x + pane.w - 4}" y1="${pane.y + 4}" x2="${cx}" y2="${pane.y + pane.h - 4}" stroke="${frameDark}" stroke-width="1" stroke-dasharray="6 4" opacity=".4"/>`
+        html += `<line x1="${pane.x + 4}" y1="${pane.y + 4}" x2="${cx}" y2="${pane.y + pane.h - 4}" stroke="${color}" stroke-width="1" stroke-dasharray="6 4" opacity=".3"/>`
+        html += `<line x1="${pane.x + pane.w - 4}" y1="${pane.y + 4}" x2="${cx}" y2="${pane.y + pane.h - 4}" stroke="${color}" stroke-width="1" stroke-dasharray="6 4" opacity=".3"/>`
       }
-      // fixed — nothing drawn
+    }
+
+    function drawHandle(pane, dark, mid, light) {
+      const isLeft = pane.handleSide === 'left'
+      const hx = isLeft ? pane.x + 8 : pane.x + pane.w - 14
+      const hy = pane.y + pane.h / 2 - 18
+
+      // Основание ручки (розетка)
+      html += `<rect x="${hx - 1}" y="${hy + 10}" width="8" height="16" rx="2" fill="${mid}" stroke="${dark}" stroke-width=".8"/>`
+      html += `<rect x="${hx}" y="${hy + 11}" width="6" height="14" rx="1.5" fill="${light}" opacity=".4"/>`
+
+      // Стержень ручки (вертикальная часть)
+      html += `<rect x="${hx + 1}" y="${hy - 2}" width="4" height="14" rx="1.5" fill="${dark}" opacity=".8"/>`
+      html += `<rect x="${hx + 1.5}" y="${hy - 1}" width="3" height="12" rx="1" fill="${mid}" opacity=".5"/>`
+
+      // Набалдашник
+      html += `<rect x="${hx}" y="${hy - 4}" width="6" height="4" rx="1.5" fill="${dark}" opacity=".9"/>`
     }
   }
 
@@ -207,33 +299,22 @@ document.addEventListener('DOMContentLoaded', () => {
 
   function lighten(hex, amt) {
     let [r, g, b] = hexToRgb(hex)
-    r = Math.min(255, r + amt)
-    g = Math.min(255, g + amt)
-    b = Math.min(255, b + amt)
-    return rgbToHex(r, g, b)
+    return rgbToHex(Math.min(255, r + amt), Math.min(255, g + amt), Math.min(255, b + amt))
   }
-
   function darken(hex, amt) {
     let [r, g, b] = hexToRgb(hex)
-    r = Math.max(0, r - amt)
-    g = Math.max(0, g - amt)
-    b = Math.max(0, b - amt)
-    return rgbToHex(r, g, b)
+    return rgbToHex(Math.max(0, r - amt), Math.max(0, g - amt), Math.max(0, b - amt))
   }
-
   function hexToRgb(hex) {
     hex = hex.replace('#', '')
     return [parseInt(hex.substr(0, 2), 16), parseInt(hex.substr(2, 2), 16), parseInt(hex.substr(4, 2), 16)]
   }
-
   function rgbToHex(r, g, b) {
     return '#' + [r, g, b].map(c => c.toString(16).padStart(2, '0')).join('')
   }
 
-  // Order button from configurator
   document.getElementById('configOrder')?.addEventListener('click', () => {
     const msg = `Хочу заказать окно:\n• Тип: ${state.type}\n• Открывание: ${state.open}\n• Цвет: ${state.colorName}\n• Размер: ${state.width}x${state.height} мм\n• Тариф: ${state.tariff} ₽/м²`
-
     const form = document.getElementById('contactForm')
     if (form) {
       const textarea = form.querySelector('textarea')
@@ -242,7 +323,6 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   })
 
-  // Initial render
   render()
   calcPrice()
 })
