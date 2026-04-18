@@ -1,19 +1,53 @@
+const rateMap = new Map()
+
 export default async function handler(req, res) {
   if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Method not allowed' })
   }
 
-  const { name, phone, service, message, type, timestamp } = req.body
+  // Rate limiting: max 5 requests per IP per minute
+  const ip = req.headers['x-forwarded-for']?.split(',')[0] || req.socket?.remoteAddress || 'unknown'
+  const now = Date.now()
+  const window = 60_000
+  const maxReqs = 5
 
+  const entry = rateMap.get(ip) || { count: 0, start: now }
+  if (now - entry.start > window) {
+    entry.count = 1
+    entry.start = now
+  } else {
+    entry.count++
+  }
+  rateMap.set(ip, entry)
+
+  if (entry.count > maxReqs) {
+    return res.status(429).json({ error: 'Too many requests' })
+  }
+
+  // Cleanup old entries every 100 requests
+  if (rateMap.size > 100) {
+    for (const [k, v] of rateMap) {
+      if (now - v.start > window * 5) rateMap.delete(k)
+    }
+  }
+
+  const { name, phone, service, message, type, timestamp } = req.body || {}
+
+  // Input validation
   if (!name || !phone) {
     return res.status(400).json({ error: 'Name and phone required' })
   }
 
-  // Basic phone validation
-  const cleanPhone = phone.replace(/\D/g, '')
+  const cleanName = sanitize(String(name)).slice(0, 100)
+  const cleanMsg = message ? sanitize(String(message)).slice(0, 500) : ''
+
+  const cleanPhone = String(phone).replace(/\D/g, '')
   if (cleanPhone.length < 10 || cleanPhone.length > 12) {
     return res.status(400).json({ error: 'Invalid phone' })
   }
+
+  const validServices = ['windows', 'balcony', 'doors', 'cottage', 'other']
+  const cleanService = validServices.includes(service) ? service : ''
 
   const TOKEN = process.env.TELEGRAM_BOT_TOKEN
   const CHAT_ID = process.env.TELEGRAM_CHAT_ID
@@ -23,7 +57,7 @@ export default async function handler(req, res) {
     return res.status(500).json({ error: 'Server config error' })
   }
 
-  const services = {
+  const serviceNames = {
     windows: 'Пластиковые окна',
     balcony: 'Остекление балкона',
     doors: 'Пластиковые двери',
@@ -35,10 +69,10 @@ export default async function handler(req, res) {
   const title = type === 'callback' ? 'Заказ звонка' : 'Новая заявка'
 
   let text = `${emoji} <b>${title}</b>\n\n`
-  text += `👤 <b>Имя:</b> ${escapeHtml(name)}\n`
+  text += `👤 <b>Имя:</b> ${escapeHtml(cleanName)}\n`
   text += `📱 <b>Телефон:</b> ${escapeHtml(phone)}\n`
-  if (service) text += `🏠 <b>Услуга:</b> ${services[service] || service}\n`
-  if (message) text += `💬 <b>Сообщение:</b> ${escapeHtml(message)}\n`
+  if (cleanService) text += `🏠 <b>Услуга:</b> ${serviceNames[cleanService]}\n`
+  if (cleanMsg) text += `💬 <b>Сообщение:</b> ${escapeHtml(cleanMsg)}\n`
   text += `\n🕐 ${new Date(timestamp || Date.now()).toLocaleString('ru-RU', { timeZone: 'Europe/Kaliningrad' })}`
 
   try {
@@ -70,4 +104,8 @@ function escapeHtml(str) {
     .replace(/&/g, '&amp;')
     .replace(/</g, '&lt;')
     .replace(/>/g, '&gt;')
+}
+
+function sanitize(str) {
+  return str.replace(/[<>{}()\[\]\\\/]/g, '').trim()
 }

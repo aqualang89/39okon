@@ -58,8 +58,69 @@
     }
   }
   </script>
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+      {
+        "@type": "Question",
+        "name": "Сколько стоят пластиковые окна в Калининграде?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Цены начинаются от 3 300 ₽/м² за тариф «Эконом», от 3 800 ₽/м² за «Стандарт» и от 5 900 ₽/м² за «Максимум». Точная стоимость зависит от размеров, типа профиля и дополнительных опций."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Сколько времени занимает изготовление окон?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Изготовление занимает 5 рабочих дней. Замер бесплатный, доставка и установка включены."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Какая гарантия на окна?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Мы предоставляем полную гарантию 10 лет на окна, фурнитуру и монтажные работы."
+        }
+      }
+    ]
+  }
+  </script>
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Service",
+    "serviceType": "Производство и установка пластиковых окон",
+    "provider": {
+      "@type": "LocalBusiness",
+      "name": "39 Окон"
+    },
+    "areaServed": {
+      "@type": "City",
+      "name": "Калининград"
+    },
+    "hasOfferCatalog": {
+      "@type": "OfferCatalog",
+      "name": "Оконные услуги",
+      "itemListElement": [
+        {"@type": "Offer", "itemOffered": {"@type": "Service", "name": "Пластиковые окна"}, "priceSpecification": {"@type": "PriceSpecification", "price": "3300", "priceCurrency": "RUB", "unitText": "м²"}},
+        {"@type": "Offer", "itemOffered": {"@type": "Service", "name": "Остекление балконов"}, "priceSpecification": {"@type": "PriceSpecification", "price": "12000", "priceCurrency": "RUB"}},
+        {"@type": "Offer", "itemOffered": {"@type": "Service", "name": "Пластиковые двери"}, "priceSpecification": {"@type": "PriceSpecification", "price": "8500", "priceCurrency": "RUB"}}
+      ]
+    }
+  }
+  </script>
 </head>
 <body>
+
+  <!-- Skip nav -->
+  <a href="#hero" class="skip-nav">Перейти к содержимому</a>
 
   <!-- HEADER -->
   <header class="header" id="header">
@@ -68,12 +129,13 @@
         <span class="logo__number">39</span>
         <span class="logo__text">окон</span>
       </a>
-      <nav class="nav" id="nav">
+      <nav class="nav" id="nav" role="navigation" aria-label="Основная навигация">
         <a href="#services" class="nav__link">Услуги</a>
         <a href="#pricing" class="nav__link">Цены</a>
         <a href="#configurator" class="nav__link">Конфигуратор</a>
         <a href="#about" class="nav__link">О нас</a>
         <a href="#reviews" class="nav__link">Отзывы</a>
+        <a href="#portfolio" class="nav__link">Работы</a>
         <a href="#blog" class="nav__link">Блог</a>
         <a href="#contact" class="nav__link">Контакты</a>
       </nav>
@@ -86,8 +148,9 @@
 
   <!-- HERO -->
   <section class="hero" id="hero">
-    <div class="hero__bg"></div>
+    <div class="hero__bg" role="img" aria-label="Панорамные окна с видом на море в премиальном интерьере"></div>
     <div class="hero__overlay"></div>
+    <div class="hero__vignette"></div>
     <div class="container hero__content">
       <h1 class="hero__title">Окна, которые<br>меняют дом</h1>
       <p class="hero__subtitle">Изготовление за 5 дней &middot; Цены на 12% ниже рынка &middot; Гарантия 10 лет</p>
@@ -113,7 +176,7 @@
   </section>
 
   <!-- ADVANTAGES -->
-  <section class="advantages" id="advantages">
+  <section class="advantages has-noise" id="advantages">
     <div class="container">
       <div class="advantages__grid">
         <div class="advantage-card">
@@ -420,6 +483,52 @@
     </div>
   </section>
 
+  <!-- PORTFOLIO -->
+  <section class="portfolio" id="portfolio">
+    <div class="container">
+      <h2 class="section-title">Наши работы</h2>
+      <p class="section-subtitle">Реальные проекты наших клиентов в Калининграде</p>
+      <div class="portfolio__grid">
+        <div class="portfolio__item">
+          <img src="/img/work-1.jpg" alt="Установка пластиковых окон в квартире, Калининград" loading="lazy">
+          <div class="portfolio__overlay">
+            <span>Квартира, ул. Сельма</span>
+          </div>
+        </div>
+        <div class="portfolio__item">
+          <img src="/img/work-2.jpg" alt="Остекление балкона, Калининград" loading="lazy">
+          <div class="portfolio__overlay">
+            <span>Остекление балкона</span>
+          </div>
+        </div>
+        <div class="portfolio__item">
+          <img src="/img/work-3.jpg" alt="Панорамные окна в коттедже" loading="lazy">
+          <div class="portfolio__overlay">
+            <span>Коттедж, пос. Родники</span>
+          </div>
+        </div>
+        <div class="portfolio__item">
+          <img src="/img/work-4.jpg" alt="Пластиковые окна с ламинацией под дерево" loading="lazy">
+          <div class="portfolio__overlay">
+            <span>Ламинация под дерево</span>
+          </div>
+        </div>
+        <div class="portfolio__item">
+          <img src="/img/work-5.jpg" alt="Установка окон в новостройке" loading="lazy">
+          <div class="portfolio__overlay">
+            <span>Новостройка, 6 окон</span>
+          </div>
+        </div>
+        <div class="portfolio__item">
+          <img src="/img/work-6.jpg" alt="Остекление лоджии с выносом" loading="lazy">
+          <div class="portfolio__overlay">
+            <span>Лоджия с выносом</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
   <!-- REVIEWS -->
   <section class="reviews" id="reviews">
     <div class="container">
@@ -507,20 +616,33 @@
       <h2 class="section-title">Свяжитесь с нами</h2>
       <p class="section-subtitle">Оставьте заявку и мы перезвоним в течение 15 минут</p>
       <div class="contact__grid">
-        <form class="contact-form" id="contactForm">
-          <input type="text" name="name" class="contact-form__input" placeholder="Ваше имя" required autocomplete="name">
-          <input type="tel" name="phone" class="contact-form__input" placeholder="Телефон" required autocomplete="tel">
-          <select name="service" class="contact-form__input contact-form__select">
-            <option value="" disabled selected>Что вас интересует?</option>
-            <option value="windows">Пластиковые окна</option>
-            <option value="balcony">Остекление балкона</option>
-            <option value="doors">Пластиковые двери</option>
-            <option value="cottage">Остекление коттеджа</option>
-            <option value="other">Другое</option>
-          </select>
-          <textarea name="message" class="contact-form__input contact-form__textarea" placeholder="Комментарий (необязательно)" rows="3"></textarea>
-          <button type="submit" class="btn btn--primary btn--full">Отправить заявку</button>
-          <p class="contact-form__privacy">Нажимая кнопку, вы соглашаетесь с обработкой персональных данных</p>
+        <form class="chat-form" id="contactForm">
+          <div class="chat-form__messages" id="chatMessages">
+            <div class="chat-msg chat-msg--bot">
+              <div class="chat-msg__bubble">Здравствуйте! Чем могу помочь? Выберите, что вас интересует:</div>
+            </div>
+          </div>
+          <div class="chat-form__step active" data-step="1">
+            <div class="chat-form__options">
+              <button type="button" class="chat-option" data-value="windows">Пластиковые окна</button>
+              <button type="button" class="chat-option" data-value="balcony">Остекление балкона</button>
+              <button type="button" class="chat-option" data-value="doors">Пластиковые двери</button>
+              <button type="button" class="chat-option" data-value="cottage">Остекление коттеджа</button>
+              <button type="button" class="chat-option" data-value="other">Другое</button>
+            </div>
+          </div>
+          <div class="chat-form__step" data-step="2">
+            <input type="text" name="name" class="chat-form__input" placeholder="Как вас зовут?" autocomplete="name">
+            <button type="button" class="chat-form__send" aria-label="Отправить">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M5 12h14M12 5l7 7-7 7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </button>
+          </div>
+          <div class="chat-form__step" data-step="3">
+            <input type="tel" name="phone" class="chat-form__input" placeholder="Номер телефона" autocomplete="tel">
+            <button type="submit" class="chat-form__send" aria-label="Отправить">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M5 12h14M12 5l7 7-7 7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </button>
+          </div>
         </form>
         <div class="contact__info">
           <div class="contact__item">
@@ -572,7 +694,7 @@
   </div>
 
   <!-- FOOTER -->
-  <footer class="footer">
+  <footer class="footer has-noise">
     <div class="container footer__inner">
       <div class="footer__top">
         <div class="footer__brand">
@@ -588,6 +710,7 @@
           <a href="#configurator">Конфигуратор</a>
           <a href="#about">О нас</a>
           <a href="#reviews">Отзывы</a>
+          <a href="#portfolio">Работы</a>
           <a href="#blog">Блог</a>
           <a href="#contact">Контакты</a>
         </nav>

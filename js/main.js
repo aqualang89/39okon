@@ -27,16 +27,12 @@ document.addEventListener('DOMContentLoaded', () => {
     })
   })
 
-  // Header scroll effect
+  // Header scroll
   const header = document.getElementById('header')
-  let lastScroll = 0
-
   window.addEventListener('scroll', () => {
-    const y = window.scrollY
-    header.style.background = y > 50
+    header.style.background = window.scrollY > 50
       ? 'rgba(26, 26, 46, .98)'
       : 'rgba(26, 26, 46, .95)'
-    lastScroll = y
   })
 
   // Counter animation
@@ -62,7 +58,9 @@ document.addEventListener('DOMContentLoaded', () => {
     counted = true
   }
 
-  // Fade-in on scroll
+  // Fade-in on scroll (fallback for browsers without scroll-timeline)
+  const supportsScrollTimeline = CSS.supports('animation-timeline', 'view()')
+
   const observer = new IntersectionObserver((entries) => {
     entries.forEach(entry => {
       if (entry.isIntersecting) {
@@ -72,9 +70,13 @@ document.addEventListener('DOMContentLoaded', () => {
     })
   }, { threshold: 0.1 })
 
-  document.querySelectorAll('.service-card, .price-card, .advantage-card, .review-card, .blog-card, .stat-card, .about__info, .contact-form, .contact__info').forEach(el => {
-    el.classList.add('fade-in')
-    observer.observe(el)
+  document.querySelectorAll('.service-card, .price-card, .advantage-card, .review-card, .blog-card, .stat-card, .about__info, .chat-form, .contact__info, .portfolio__item').forEach(el => {
+    if (supportsScrollTimeline) {
+      el.classList.add('scroll-reveal')
+    } else {
+      el.classList.add('fade-in')
+      observer.observe(el)
+    }
   })
 
   // Counter trigger
@@ -91,22 +93,36 @@ document.addEventListener('DOMContentLoaded', () => {
 
   if (track && prevBtn && nextBtn) {
     let idx = 0
-    const cards = track.children
-    const getShift = () => {
-      if (window.innerWidth <= 768) return track.scrollWidth / cards.length
-      return (track.scrollWidth + 24 * (cards.length - 1)) / cards.length
+    const cards = [...track.children]
+    const getMaxIdx = () => {
+      const visible = window.innerWidth <= 768 ? 1 : window.innerWidth <= 1024 ? 2 : 3
+      return Math.max(0, cards.length - visible)
     }
 
     const slide = () => {
-      const cardWidth = cards[0].offsetWidth + 24
+      const gap = 24
+      const cardWidth = cards[0].offsetWidth + gap
       track.style.transform = `translateX(-${idx * cardWidth}px)`
+      prevBtn.style.opacity = idx === 0 ? '.3' : '1'
+      nextBtn.style.opacity = idx >= getMaxIdx() ? '.3' : '1'
     }
 
     prevBtn.addEventListener('click', () => { if (idx > 0) { idx--; slide() } })
-    nextBtn.addEventListener('click', () => {
-      const visible = window.innerWidth <= 768 ? 1 : 3
-      if (idx < cards.length - visible) { idx++; slide() }
-    })
+    nextBtn.addEventListener('click', () => { if (idx < getMaxIdx()) { idx++; slide() } })
+
+    // Touch swipe
+    let startX = 0
+    track.addEventListener('touchstart', e => { startX = e.touches[0].clientX }, { passive: true })
+    track.addEventListener('touchend', e => {
+      const diff = startX - e.changedTouches[0].clientX
+      if (Math.abs(diff) > 50) {
+        if (diff > 0 && idx < getMaxIdx()) { idx++; slide() }
+        else if (diff < 0 && idx > 0) { idx--; slide() }
+      }
+    }, { passive: true })
+
+    window.addEventListener('resize', () => { idx = Math.min(idx, getMaxIdx()); slide() })
+    slide()
   }
 
   // Callback modal
@@ -121,15 +137,108 @@ document.addEventListener('DOMContentLoaded', () => {
   openBtns.forEach(btn => btn?.addEventListener('click', openModal))
   closeBtn?.addEventListener('click', closeModal)
   backdrop?.addEventListener('click', closeModal)
+  document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal() })
 
-  document.addEventListener('keydown', e => {
-    if (e.key === 'Escape') closeModal()
-  })
+  // Chat form
+  const chatForm = document.getElementById('contactForm')
+  const chatMessages = document.getElementById('chatMessages')
+  if (chatForm && chatMessages) {
+    const formData = {}
+    const serviceNames = {
+      windows: 'Пластиковые окна',
+      balcony: 'Остекление балкона',
+      doors: 'Пластиковые двери',
+      cottage: 'Остекление коттеджа',
+      other: 'Другое'
+    }
 
-  // Form submit
-  const handleSubmit = async (form, type) => {
+    const addMsg = (text, type = 'bot') => {
+      const div = document.createElement('div')
+      div.className = `chat-msg chat-msg--${type}`
+      div.innerHTML = `<div class="chat-msg__bubble">${text}</div>`
+      chatMessages.appendChild(div)
+      chatMessages.scrollTop = chatMessages.scrollHeight
+    }
+
+    const showStep = n => {
+      chatForm.querySelectorAll('.chat-form__step').forEach(s => s.classList.remove('active'))
+      const step = chatForm.querySelector(`[data-step="${n}"]`)
+      if (step) {
+        step.classList.add('active')
+        const input = step.querySelector('input')
+        if (input) setTimeout(() => input.focus(), 100)
+      }
+    }
+
+    // Step 1: service selection
+    chatForm.querySelectorAll('.chat-option').forEach(btn => {
+      btn.addEventListener('click', () => {
+        formData.service = btn.dataset.value
+        addMsg(serviceNames[btn.dataset.value], 'user')
+        setTimeout(() => {
+          addMsg('Отлично! Как вас зовут?')
+          showStep(2)
+        }, 400)
+      })
+    })
+
+    // Step 2: name
+    const step2send = chatForm.querySelector('[data-step="2"] .chat-form__send')
+    const nameInput = chatForm.querySelector('[data-step="2"] input')
+
+    const submitName = () => {
+      const val = nameInput?.value.trim()
+      if (!val) return
+      formData.name = val
+      addMsg(val, 'user')
+      setTimeout(() => {
+        addMsg(`${val}, оставьте номер телефона — мы перезвоним в течение 15 минут`)
+        showStep(3)
+      }, 400)
+    }
+
+    step2send?.addEventListener('click', submitName)
+    nameInput?.addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); submitName() } })
+
+    // Step 3: phone + submit
+    chatForm.addEventListener('submit', async e => {
+      e.preventDefault()
+      const phoneInput = chatForm.querySelector('[data-step="3"] input')
+      const phone = phoneInput?.value.trim()
+      if (!phone) return
+
+      formData.phone = phone
+      addMsg(phone, 'user')
+      showStep(0) // hide input
+
+      const data = { ...formData, type: 'contact', timestamp: new Date().toISOString() }
+
+      try {
+        const res = await fetch('/api/contact', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(data)
+        })
+
+        setTimeout(() => {
+          if (res.ok) {
+            addMsg('Спасибо! Заявка отправлена. Мы перезвоним вам в ближайшее время!')
+          } else {
+            addMsg('Не удалось отправить. Позвоните нам: +7 (4012) 52-44-20')
+          }
+        }, 500)
+      } catch {
+        setTimeout(() => addMsg('Ошибка сети. Позвоните нам: +7 (4012) 52-44-20'), 500)
+      }
+    })
+  }
+
+  // Callback form (modal)
+  document.getElementById('callbackForm')?.addEventListener('submit', async e => {
+    e.preventDefault()
+    const form = e.target
     const data = Object.fromEntries(new FormData(form))
-    data.type = type
+    data.type = 'callback'
     data.timestamp = new Date().toISOString()
 
     try {
@@ -152,15 +261,5 @@ document.addEventListener('DOMContentLoaded', () => {
     } catch {
       alert('Ошибка сети. Позвоните нам: +7 (4012) 52-44-20')
     }
-  }
-
-  document.getElementById('contactForm')?.addEventListener('submit', e => {
-    e.preventDefault()
-    handleSubmit(e.target, 'contact')
-  })
-
-  document.getElementById('callbackForm')?.addEventListener('submit', e => {
-    e.preventDefault()
-    handleSubmit(e.target, 'callback')
   })
 })
