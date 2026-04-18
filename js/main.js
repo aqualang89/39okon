@@ -1,4 +1,14 @@
 document.addEventListener('DOMContentLoaded', () => {
+  // Rating dots
+  document.querySelectorAll('.rating-dots').forEach(el => {
+    const filled = +el.dataset.filled
+    let html = ''
+    for (let i = 0; i < 5; i++) {
+      html += `<span style="width:10px;height:10px;border-radius:50%;background:${i < filled ? 'var(--gold)' : 'var(--gray-light)'};display:inline-block"></span>`
+    }
+    el.innerHTML = html
+  })
+
   // Burger
   const burger = document.getElementById('burger')
   const nav = document.getElementById('nav')

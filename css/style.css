@@ -312,7 +312,39 @@ input, select, textarea { font-family: inherit; font-size: inherit; }
   font-weight: 700;
   font-size: .85rem;
 }
-.price-card__header { margin-bottom: 24px; }
+.price-card__img {
+  text-align: center;
+  margin: -12px -10px 16px;
+  min-height: 180px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.price-card__img img {
+  max-height: 200px;
+  width: auto;
+  object-fit: contain;
+  filter: drop-shadow(0 8px 16px rgba(0,0,0,.08));
+  transition: var(--transition);
+}
+.price-card:hover .price-card__img img { transform: scale(1.05); }
+
+.price-card__ratings { margin-bottom: 20px; }
+.rating-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 6px 0;
+}
+.rating-row__label { font-size: .85rem; color: var(--gray); }
+.rating-dots {
+  display: flex;
+  gap: 5px;
+}
+.rating-dots::before,
+.rating-dots::after { display: none; }
+
+.price-card__header { margin-bottom: 16px; }
 .price-card__name {
   font-size: 1.4rem;
   font-weight: 800;
