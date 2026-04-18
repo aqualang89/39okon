@@ -18,7 +18,12 @@
   --font: 'Inter', -apple-system, sans-serif;
 }
 
-html { scroll-behavior: smooth; scroll-padding-top: 80px; }
+html {
+  scroll-behavior: smooth;
+  scroll-padding-top: 80px;
+  background: var(--dark);
+  overscroll-behavior: none;
+}
 body {
   font-family: var(--font);
   color: var(--text);
@@ -188,8 +193,13 @@ button:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible
 .hero__bg {
   position: absolute;
   inset: 0;
-  background: url('/img/hero-bg.png') center/cover no-repeat;
-  opacity: .5;
+  background: url('/img/hero-bg.webp') center/cover no-repeat;
+  opacity: 0;
+  will-change: opacity;
+  animation: heroBgIn 1s ease .2s forwards;
+}
+@keyframes heroBgIn {
+  to { opacity: .5; }
 }
 .hero__overlay {
   position: absolute;
@@ -1064,4 +1074,18 @@ button:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible
   .configurator__preview { padding: 20px; min-height: 280px; }
   .config-options { flex-direction: column; }
   .config-btn { text-align: center; }
+}
+
+/* Touch devices: убираем hover-эффекты, ускоряем анимации */
+@media (hover: none) {
+  .service-card:hover,
+  .price-card:hover,
+  .stat-card:hover,
+  .blog-card:hover { transform: none; box-shadow: none; }
+  .portfolio__item:hover img { transform: none; }
+  .portfolio__overlay { opacity: 1; }
+  .btn--primary:hover { transform: none; }
+  .fade-in { transition-duration: .3s; }
+  .reviews__track { scroll-snap-type: x mandatory; -webkit-overflow-scrolling: touch; }
+  .review-card { scroll-snap-align: start; }
 }
