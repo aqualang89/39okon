@@ -616,6 +616,32 @@ button:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible
 
 /* ========== REVIEWS ========== */
 .reviews { padding: 100px 0; }
+.reviews__rating {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 24px;
+  margin-bottom: 40px;
+}
+.reviews__badge {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.reviews__score {
+  font-size: 3rem;
+  font-weight: 900;
+  color: var(--dark);
+}
+.reviews__badge-stars {
+  color: var(--gold);
+  font-size: 1.2rem;
+  display: block;
+}
+.reviews__badge-count {
+  color: var(--gray);
+  font-size: .9rem;
+}
 .reviews__slider { position: relative; overflow: hidden; }
 .reviews__track {
   display: flex;
