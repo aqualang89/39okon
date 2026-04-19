@@ -22,7 +22,8 @@ html {
   scroll-behavior: smooth;
   scroll-padding-top: 80px;
   background: var(--dark);
-  overscroll-behavior: none;
+  overscroll-behavior-y: contain;
+  -webkit-overflow-scrolling: touch;
 }
 body {
   font-family: var(--font);
@@ -1063,7 +1064,12 @@ button:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible
   .contact__grid { grid-template-columns: 1fr; }
   .portfolio__grid { grid-template-columns: 1fr 1fr; }
 
-  .review-card { min-width: 85vw; }
+  .review-card {
+    min-width: calc(100vw - 56px);
+    padding: 20px;
+  }
+  .review-card__text { font-size: .9rem; line-height: 1.6; margin-bottom: 14px; }
+  .review-card__stars { font-size: 1rem; margin-bottom: 10px; }
 
   .reviews__rating { flex-direction: column; align-items: center; gap: 16px; }
   .reviews__score { font-size: 2.5rem; }
