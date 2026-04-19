@@ -7,6 +7,10 @@ document.addEventListener('DOMContentLoaded', () => {
     open: 'tilt-turn',
     color: '#FFFFFF',
     colorName: 'white',
+    handleColor: '#C0C0C0',
+    sillColor: '#FFFFFF',
+    slopeColor: '#F0F0F0',
+    slopeMatch: false,
     width: 1400,
     height: 1400,
     tariff: 3800
@@ -30,19 +34,36 @@ document.addEventListener('DOMContentLoaded', () => {
     })
   }
 
+  const bindColors = (containerId, key) => {
+    const container = document.getElementById(containerId)
+    if (!container) return
+    container.querySelectorAll('.color-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        container.querySelectorAll('.color-btn').forEach(b => b.classList.remove('active'))
+        btn.classList.add('active')
+        if (key === 'slopeColor' && btn.dataset.color === 'match') {
+          state.slopeMatch = true
+          state.slopeColor = state.color
+        } else {
+          if (key === 'slopeColor') state.slopeMatch = false
+          state[key] = btn.dataset.color
+        }
+        if (key === 'color') {
+          state.colorName = btn.dataset.value
+          if (state.slopeMatch) state.slopeColor = state.color
+        }
+        render()
+      })
+    })
+  }
+
   bind('windowType', 'type')
   bind('openType', 'open')
   bind('windowTariff', 'tariff')
-
-  document.getElementById('windowColor')?.querySelectorAll('.color-btn').forEach(btn => {
-    btn.addEventListener('click', () => {
-      document.querySelectorAll('.color-btn').forEach(b => b.classList.remove('active'))
-      btn.classList.add('active')
-      state.color = btn.dataset.color
-      state.colorName = btn.dataset.value
-      render()
-    })
-  })
+  bindColors('windowColor', 'color')
+  bindColors('handleColor', 'handleColor')
+  bindColors('sillColor', 'sillColor')
+  bindColors('slopeColor', 'slopeColor')
 
   const widthSlider = document.getElementById('windowWidth')
   const heightSlider = document.getElementById('windowHeight')
@@ -77,8 +98,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const ratio = state.width / state.height
     const newW = ratio >= 1 ? 440 : Math.round(540 * ratio)
     const newH = ratio >= 1 ? Math.round(440 / ratio) : 540
-    const totalW = newW + 60  // место для откосов
-    const totalH = newH + 80  // место для подоконника
+    const totalW = newW + 60
+    const totalH = newH + 80
     svg.setAttribute('viewBox', `0 0 ${totalW} ${totalH}`)
 
     const isWhite = state.colorName === 'white'
@@ -87,14 +108,25 @@ document.addEventListener('DOMContentLoaded', () => {
     const frameLight = isWhite ? '#FFFFFF' : lighten(state.color, 25)
     const frameMid = isWhite ? '#D8D8D8' : darken(state.color, 15)
 
-    const ox = 30  // offset для откосов
+    const slopeBase = state.slopeMatch ? frameColor : state.slopeColor
+    const slopeDark = darken(slopeBase, 25)
+    const sillBase = state.sillColor
+    const sillDark = darken(sillBase, 30)
+    const sillLight = lighten(sillBase, 20)
+    const sillMid = darken(sillBase, 12)
+
+    const handleBase = state.handleColor
+    const handleDark = darken(handleBase, 40)
+    const handleLight = lighten(handleBase, 30)
+    const handleMid = darken(handleBase, 15)
+
+    const ox = 30
     const oy = 20
     const pad = 16
     const frame = 14
 
     let html = ''
 
-    // --- DEFS ---
     html += `<defs>
       <linearGradient id="frameFill" x1="0" y1="0" x2="1" y2="1">
         <stop offset="0%" stop-color="${frameLight}"/>
@@ -117,24 +149,28 @@ document.addEventListener('DOMContentLoaded', () => {
         <stop offset="100%" stop-color="rgba(255,255,255,0)"/>
       </linearGradient>
       <linearGradient id="slopLeft" x1="1" y1="0" x2="0" y2="0">
-        <stop offset="0%" stop-color="#E8E8E8"/>
-        <stop offset="100%" stop-color="#D0D0D0"/>
+        <stop offset="0%" stop-color="${slopeBase}"/>
+        <stop offset="100%" stop-color="${slopeDark}"/>
       </linearGradient>
       <linearGradient id="slopRight" x1="0" y1="0" x2="1" y2="0">
-        <stop offset="0%" stop-color="#E8E8E8"/>
-        <stop offset="100%" stop-color="#D0D0D0"/>
+        <stop offset="0%" stop-color="${slopeBase}"/>
+        <stop offset="100%" stop-color="${slopeDark}"/>
       </linearGradient>
       <linearGradient id="slopTop" x1="0" y1="1" x2="0" y2="0">
-        <stop offset="0%" stop-color="#E8E8E8"/>
-        <stop offset="100%" stop-color="#D5D5D5"/>
+        <stop offset="0%" stop-color="${slopeBase}"/>
+        <stop offset="100%" stop-color="${slopeDark}"/>
       </linearGradient>
       <linearGradient id="sillTop" x1="0" y1="0" x2="0" y2="1">
-        <stop offset="0%" stop-color="${frameLight}"/>
-        <stop offset="100%" stop-color="${frameMid}"/>
+        <stop offset="0%" stop-color="${sillLight}"/>
+        <stop offset="100%" stop-color="${sillMid}"/>
       </linearGradient>
       <linearGradient id="sillFront" x1="0" y1="0" x2="0" y2="1">
-        <stop offset="0%" stop-color="${frameMid}"/>
-        <stop offset="100%" stop-color="${frameDark}"/>
+        <stop offset="0%" stop-color="${sillMid}"/>
+        <stop offset="100%" stop-color="${sillDark}"/>
+      </linearGradient>
+      <linearGradient id="handleFill" x1="0" y1="0" x2="1" y2="1">
+        <stop offset="0%" stop-color="${handleLight}"/>
+        <stop offset="100%" stop-color="${handleBase}"/>
       </linearGradient>
       <filter id="softShadow">
         <feDropShadow dx="0" dy="6" stdDeviation="10" flood-color="rgba(0,0,0,.18)"/>
@@ -148,32 +184,27 @@ document.addEventListener('DOMContentLoaded', () => {
       </filter>
     </defs>`
 
-    const winX = ox + pad
-    const winY = oy + pad
     const winW = newW - pad * 2
     const winH = newH - pad * 2
 
-    // --- ОТКОСЫ (slopes) ---
-    // Верхний откос (трапеция)
-    html += `<polygon points="${ox - 10},${oy - 8} ${ox + newW + 10},${oy - 8} ${ox + newW},${oy} ${ox},${oy}" fill="url(#slopTop)" stroke="#C8C8C8" stroke-width="0.5"/>`
+    // Откосы
+    html += `<polygon points="${ox - 12},${oy - 10} ${ox + newW + 12},${oy - 10} ${ox + newW},${oy} ${ox},${oy}" fill="url(#slopTop)" stroke="${slopeDark}" stroke-width="0.5"/>`
+    html += `<polygon points="${ox - 12},${oy - 10} ${ox},${oy} ${ox},${oy + newH} ${ox - 12},${oy + newH + 10}" fill="url(#slopLeft)" stroke="${slopeDark}" stroke-width="0.5"/>`
+    html += `<polygon points="${ox + newW + 12},${oy - 10} ${ox + newW},${oy} ${ox + newW},${oy + newH} ${ox + newW + 12},${oy + newH + 10}" fill="url(#slopRight)" stroke="${slopeDark}" stroke-width="0.5"/>`
 
-    // Левый откос (трапеция)
-    html += `<polygon points="${ox - 10},${oy - 8} ${ox},${oy} ${ox},${oy + newH} ${ox - 10},${oy + newH + 8}" fill="url(#slopLeft)" stroke="#C8C8C8" stroke-width="0.5"/>`
+    // Блик на откосах
+    html += `<polygon points="${ox - 10},${oy - 6} ${ox + newW * 0.3},${oy - 6} ${ox + newW * 0.3 - 4},${oy} ${ox},${oy}" fill="rgba(255,255,255,.2)"/>`
+    html += `<polygon points="${ox - 10},${oy - 4} ${ox},${oy + 4} ${ox},${oy + newH * 0.3} ${ox - 10},${oy + newH * 0.3 + 6}" fill="rgba(255,255,255,.15)"/>`
 
-    // Правый откос (трапеция)
-    html += `<polygon points="${ox + newW + 10},${oy - 8} ${ox + newW},${oy} ${ox + newW},${oy + newH} ${ox + newW + 10},${oy + newH + 8}" fill="url(#slopRight)" stroke="#C8C8C8" stroke-width="0.5"/>`
+    // Тень от откосов
+    html += `<rect x="${ox - 14}" y="${oy - 12}" width="${newW + 28}" height="${newH + 24}" rx="2" fill="none" stroke="rgba(0,0,0,.05)" stroke-width="3"/>`
 
-    // Тень от откосов на стену (лёгкая)
-    html += `<rect x="${ox - 12}" y="${oy - 10}" width="${newW + 24}" height="${newH + 20}" rx="2" fill="none" stroke="rgba(0,0,0,.06)" stroke-width="3"/>`
-
-    // --- РАМА ОСНОВНАЯ ---
+    // Рама
     html += `<rect x="${ox}" y="${oy}" width="${newW}" height="${newH}" rx="3" fill="url(#frameFill)" stroke="${frameDark}" stroke-width="1.5" filter="url(#softShadow)"/>`
-
-    // Внутренний бортик рамы (3D-эффект)
     html += `<rect x="${ox + 2}" y="${oy + 2}" width="${newW - 4}" height="${newH - 4}" rx="2" fill="none" stroke="${frameLight}" stroke-width="1" opacity=".6"/>`
     html += `<rect x="${ox + pad - 1}" y="${oy + pad - 1}" width="${winW + 2}" height="${winH + 2}" rx="1" fill="none" stroke="${frameDark}" stroke-width="1" opacity=".4"/>`
 
-    // --- СТЕКЛОПАКЕТЫ ---
+    // Створки
     const innerX = ox + pad + frame
     const innerY = oy + pad + frame
     const innerW = winW - frame * 2
@@ -181,20 +212,16 @@ document.addEventListener('DOMContentLoaded', () => {
     const panes = getPanes(state.type, innerX, innerY, innerW, innerH)
 
     panes.forEach(pane => {
-      // Створка (внутренняя рама)
+      // Рама створки
       html += `<rect x="${pane.x - frame}" y="${pane.y - frame}" width="${pane.w + frame * 2}" height="${pane.h + frame * 2}" rx="2" fill="url(#frameInner)" stroke="${frameDark}" stroke-width="1"/>`
-
-      // Бортик створки
       html += `<rect x="${pane.x - frame + 2}" y="${pane.y - frame + 2}" width="${pane.w + frame * 2 - 4}" height="${pane.h + frame * 2 - 4}" rx="1" fill="none" stroke="${frameLight}" stroke-width=".8" opacity=".5"/>`
 
       // Стекло
       html += `<rect x="${pane.x}" y="${pane.y}" width="${pane.w}" height="${pane.h}" rx="1" fill="url(#glassFill)" stroke="${frameDark}" stroke-width="1" filter="url(#innerGlow)"/>`
 
-      // Блик на стекле — диагональная полоса
+      // Блик
       const shineW = pane.w * 0.25
       html += `<polygon points="${pane.x + 6},${pane.y + 4} ${pane.x + 6 + shineW},${pane.y + 4} ${pane.x + 6 + shineW * 0.4},${pane.y + pane.h * 0.75} ${pane.x + 6},${pane.y + pane.h * 0.75}" fill="url(#glassShine)" opacity=".7"/>`
-
-      // Маленький блик сверху
       html += `<ellipse cx="${pane.x + pane.w * 0.7}" cy="${pane.y + pane.h * 0.15}" rx="${pane.w * 0.08}" ry="${pane.h * 0.04}" fill="rgba(255,255,255,.35)"/>`
 
       // Индикатор открывания
@@ -205,31 +232,28 @@ document.addEventListener('DOMContentLoaded', () => {
 
       // Ручка
       if (!pane.fixed) {
-        drawHandle(pane, frameDark, frameMid, frameLight)
+        drawHandle(pane, handleDark, handleMid, handleLight, handleBase)
       }
     })
 
-    // --- ПОДОКОННИК (3D) ---
+    // Подоконник
     const sillY = oy + newH
-    const sillOverhang = 20
-    const sillDepth = 14
-    const sillFrontH = 10
+    const sillOverhang = 22
+    const sillDepth = 16
+    const sillFrontH = 12
     const sillX = ox - sillOverhang
     const sillW = newW + sillOverhang * 2
 
-    // Верхняя плоскость подоконника
-    html += `<polygon points="${sillX + 6},${sillY} ${sillX + sillW - 6},${sillY} ${sillX + sillW},${sillY + sillDepth} ${sillX},${sillY + sillDepth}" fill="url(#sillTop)" stroke="${frameDark}" stroke-width="0.8"/>`
-
-    // Передняя грань подоконника
-    html += `<rect x="${sillX}" y="${sillY + sillDepth}" width="${sillW}" height="${sillFrontH}" rx="1" fill="url(#sillFront)" stroke="${frameDark}" stroke-width="0.5"/>`
+    html += `<polygon points="${sillX + 6},${sillY} ${sillX + sillW - 6},${sillY} ${sillX + sillW},${sillY + sillDepth} ${sillX},${sillY + sillDepth}" fill="url(#sillTop)" stroke="${sillDark}" stroke-width="0.8"/>`
+    html += `<rect x="${sillX}" y="${sillY + sillDepth}" width="${sillW}" height="${sillFrontH}" rx="1" fill="url(#sillFront)" stroke="${sillDark}" stroke-width="0.5"/>`
 
     // Блик на подоконнике
-    html += `<rect x="${sillX + 10}" y="${sillY + 2}" width="${sillW * 0.4}" height="${sillDepth - 4}" rx="1" fill="rgba(255,255,255,.25)"/>`
+    html += `<rect x="${sillX + 10}" y="${sillY + 2}" width="${sillW * 0.35}" height="${sillDepth - 4}" rx="1" fill="rgba(255,255,255,.3)"/>`
 
-    // Капельник (нижний край)
-    html += `<line x1="${sillX + 2}" y1="${sillY + sillDepth + sillFrontH}" x2="${sillX + sillW - 2}" y2="${sillY + sillDepth + sillFrontH}" stroke="${frameDark}" stroke-width="1.5" stroke-linecap="round"/>`
+    // Капельник
+    html += `<line x1="${sillX + 2}" y1="${sillY + sillDepth + sillFrontH}" x2="${sillX + sillW - 2}" y2="${sillY + sillDepth + sillFrontH}" stroke="${sillDark}" stroke-width="1.5" stroke-linecap="round"/>`
 
-    // Тень под подоконником
+    // Тень
     html += `<ellipse cx="${ox + newW / 2}" cy="${sillY + sillDepth + sillFrontH + 6}" rx="${sillW * 0.42}" ry="4" fill="rgba(0,0,0,.08)"/>`
 
     svg.innerHTML = html
@@ -246,21 +270,25 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     }
 
-    function drawHandle(pane, dark, mid, light) {
+    function drawHandle(pane, dark, _mid, light, base) {
       const isLeft = pane.handleSide === 'left'
       const hx = isLeft ? pane.x + 8 : pane.x + pane.w - 14
       const hy = pane.y + pane.h / 2 - 18
 
-      // Основание ручки (розетка)
-      html += `<rect x="${hx - 1}" y="${hy + 10}" width="8" height="16" rx="2" fill="${mid}" stroke="${dark}" stroke-width=".8"/>`
-      html += `<rect x="${hx}" y="${hy + 11}" width="6" height="14" rx="1.5" fill="${light}" opacity=".4"/>`
+      // Розетка (основание)
+      html += `<rect x="${hx - 2}" y="${hy + 10}" width="10" height="18" rx="2.5" fill="${base}" stroke="${dark}" stroke-width=".8"/>`
+      html += `<rect x="${hx - 1}" y="${hy + 11}" width="8" height="16" rx="2" fill="url(#handleFill)" opacity=".6"/>`
+      // Винты на розетке
+      html += `<circle cx="${hx + 3}" cy="${hy + 14}" r="1" fill="${dark}" opacity=".4"/>`
+      html += `<circle cx="${hx + 3}" cy="${hy + 24}" r="1" fill="${dark}" opacity=".4"/>`
 
-      // Стержень ручки (вертикальная часть)
-      html += `<rect x="${hx + 1}" y="${hy - 2}" width="4" height="14" rx="1.5" fill="${dark}" opacity=".8"/>`
-      html += `<rect x="${hx + 1.5}" y="${hy - 1}" width="3" height="12" rx="1" fill="${mid}" opacity=".5"/>`
+      // Стержень
+      html += `<rect x="${hx + 0.5}" y="${hy - 2}" width="5" height="14" rx="2" fill="${base}" stroke="${dark}" stroke-width=".6"/>`
+      html += `<rect x="${hx + 1.5}" y="${hy - 1}" width="3" height="12" rx="1" fill="${light}" opacity=".4"/>`
 
       // Набалдашник
-      html += `<rect x="${hx}" y="${hy - 4}" width="6" height="4" rx="1.5" fill="${dark}" opacity=".9"/>`
+      html += `<rect x="${hx - 0.5}" y="${hy - 5}" width="7" height="5" rx="2" fill="${base}" stroke="${dark}" stroke-width=".6"/>`
+      html += `<rect x="${hx}" y="${hy - 4}" width="5.5" height="3" rx="1.5" fill="${light}" opacity=".3"/>`
     }
   }
 
@@ -314,7 +342,7 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   document.getElementById('configOrder')?.addEventListener('click', () => {
-    const msg = `Хочу заказать окно:\n• Тип: ${state.type}\n• Открывание: ${state.open}\n• Цвет: ${state.colorName}\n• Размер: ${state.width}x${state.height} мм\n• Тариф: ${state.tariff} ₽/м²`
+    const msg = `Хочу заказать окно:\n• Тип: ${state.type}\n• Открывание: ${state.open}\n• Цвет рамы: ${state.colorName}\n• Размер: ${state.width}x${state.height} мм\n• Тариф: ${state.tariff} ₽/м²`
     const form = document.getElementById('contactForm')
     if (form) {
       const textarea = form.querySelector('textarea')
