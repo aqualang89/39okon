@@ -316,6 +316,7 @@
   color: var(--dark);
 }
 .cottage-chat .chat-option {
+  background: transparent;
   border-color: rgba(239, 192, 123, .3);
   color: var(--white);
 }
