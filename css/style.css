@@ -23,7 +23,6 @@ html {
   scroll-padding-top: 80px;
   background: var(--dark);
   overscroll-behavior: none;
-  overflow-x: clip;
 }
 body {
   font-family: var(--font);
@@ -31,8 +30,10 @@ body {
   background: var(--white);
   line-height: 1.6;
   -webkit-font-smoothing: antialiased;
-  overflow-x: clip;
 }
+
+/* Все секции — запрет горизонтального выхода */
+section, footer, .advantages { overflow-x: hidden; }
 
 a { color: inherit; text-decoration: none; }
 ul { list-style: none; }
@@ -654,7 +655,6 @@ button:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible
   color: var(--gray);
   font-size: .9rem;
 }
-.reviews { overflow: hidden; }
 .reviews__slider { position: relative; overflow: hidden; }
 .reviews__track {
   display: flex;
@@ -1065,9 +1065,9 @@ button:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible
 
   .review-card { min-width: 85vw; }
 
-  .reviews__rating { flex-wrap: wrap; gap: 12px; justify-content: flex-start; padding: 0 4px; }
-  .reviews__score { font-size: 2rem; }
-  .reviews__badge { gap: 8px; }
+  .reviews__rating { flex-direction: column; align-items: center; gap: 16px; }
+  .reviews__score { font-size: 2.5rem; }
+  .reviews__badge { justify-content: center; }
 
   .about__features { grid-template-columns: 1fr; }
 
