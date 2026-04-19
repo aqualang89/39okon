@@ -18,6 +18,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap">
+  <link rel="preload" href="/img/cottage-hero.webp" as="image" type="image/webp">
   <link rel="stylesheet" href="/css/style.css?v=5">
   <link rel="stylesheet" href="/css/cottage.css?v=1">
 </head>
@@ -325,7 +326,7 @@
       <div class="cottage-cta__inner">
         <div class="cottage-cta__info">
           <h2 class="section-title section-title--left" style="color: var(--white)">Бесплатный выезд на замер</h2>
-          <p>Мастер приедет, обмерит проёмы, покажет образцы цветов и рассчитает точную стоимость. Никаких обязательств — вы просто узнаете цену.</p>
+          <p>Мастер приедет, обмерит проёмы, покажет образцы цветов и рассчитает точную стоимость.</p>
           <div class="cottage-cta__benefits">
             <div class="cottage-cta__benefit">
               <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M5 12l5 5L19 7" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
@@ -335,18 +336,35 @@
               <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M5 12l5 5L19 7" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
               <span>Расчёт за 1 день</span>
             </div>
-            <div class="cottage-cta__benefit">
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M5 12l5 5L19 7" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
-              <span>Без обязательств</span>
-            </div>
           </div>
         </div>
-        <form class="cottage-cta__form" id="cottageForm">
-          <input type="text" name="name" placeholder="Ваше имя" required>
-          <input type="tel" name="phone" placeholder="Телефон" required>
-          <textarea name="message" placeholder="Опишите ваш проект (необязательно)" rows="3"></textarea>
-          <input type="hidden" name="service" value="Остекление коттеджа">
-          <button type="submit" class="btn btn--primary btn--full">Вызвать замерщика</button>
+        <form class="chat-form cottage-chat" id="cottageForm">
+          <div class="chat-form__messages" id="cottageChatMessages">
+            <div class="chat-msg chat-msg--bot">
+              <div class="chat-msg__bubble">Здравствуйте! Расскажите о вашем проекте — подберём остекление под ваш коттедж</div>
+            </div>
+          </div>
+          <div class="chat-form__step active" data-step="1">
+            <div class="chat-form__options">
+              <button type="button" class="chat-option" data-value="panoramic">Панорамные окна</button>
+              <button type="button" class="chat-option" data-value="non-standard">Нестандартные формы</button>
+              <button type="button" class="chat-option" data-value="full">Полное остекление дома</button>
+              <button type="button" class="chat-option" data-value="replace">Замена старых окон</button>
+              <button type="button" class="chat-option" data-value="other">Другое</button>
+            </div>
+          </div>
+          <div class="chat-form__step" data-step="2">
+            <input type="text" name="name" class="chat-form__input" placeholder="Как вас зовут?" autocomplete="name">
+            <button type="button" class="chat-form__send" aria-label="Отправить">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M5 12h14M12 5l7 7-7 7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </button>
+          </div>
+          <div class="chat-form__step" data-step="3">
+            <input type="tel" name="phone" class="chat-form__input" placeholder="Номер телефона" autocomplete="tel">
+            <button type="submit" class="chat-form__send" aria-label="Отправить">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M5 12h14M12 5l7 7-7 7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </button>
+          </div>
         </form>
       </div>
     </div>

@@ -2,7 +2,7 @@
 
 /* Hero override */
 .cottage-hero__bg {
-  background: url('/img/cottage-hero.jpg') center/cover no-repeat;
+  background: url('/img/cottage-hero.webp') center/cover no-repeat;
 }
 
 .cottage-hero__badge {
@@ -299,35 +299,40 @@
   font-weight: 500;
 }
 
-.cottage-cta__form {
-  display: flex;
-  flex-direction: column;
-  gap: 14px;
+.cottage-chat {
   background: rgba(255,255,255,.05);
   border: 1px solid rgba(239, 192, 123, .15);
   border-radius: var(--radius);
-  padding: 36px;
 }
-.cottage-cta__form input,
-.cottage-cta__form textarea {
-  padding: 14px 18px;
-  border: 1px solid rgba(255,255,255,.15);
-  border-radius: var(--radius-sm);
-  background: rgba(255,255,255,.08);
+.cottage-chat .chat-form__messages {
+  background: transparent;
+}
+.cottage-chat .chat-msg--bot .chat-msg__bubble {
+  background: rgba(255,255,255,.1);
   color: var(--white);
-  font-size: 1rem;
-  transition: var(--transition);
-  resize: none;
 }
-.cottage-cta__form input::placeholder,
-.cottage-cta__form textarea::placeholder {
+.cottage-chat .chat-msg--user .chat-msg__bubble {
+  background: var(--gold);
+  color: var(--dark);
+}
+.cottage-chat .chat-option {
+  border-color: rgba(239, 192, 123, .3);
+  color: var(--white);
+}
+.cottage-chat .chat-option:hover {
+  background: var(--gold);
+  color: var(--dark);
+}
+.cottage-chat .chat-form__input {
+  background: rgba(255,255,255,.08);
+  border-color: rgba(255,255,255,.15);
+  color: var(--white);
+}
+.cottage-chat .chat-form__input::placeholder {
   color: rgba(250,250,250,.4);
 }
-.cottage-cta__form input:focus,
-.cottage-cta__form textarea:focus {
-  outline: none;
+.cottage-chat .chat-form__input:focus {
   border-color: var(--gold);
-  background: rgba(255,255,255,.12);
 }
 
 /* ========== RESPONSIVE ========== */

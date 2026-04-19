@@ -1,5 +1,4 @@
 document.addEventListener('DOMContentLoaded', () => {
-  // Scroll reveal for cottage cards
   const observer = new IntersectionObserver(entries => {
     entries.forEach(entry => {
       if (entry.isIntersecting) {
@@ -14,47 +13,94 @@ document.addEventListener('DOMContentLoaded', () => {
     observer.observe(el)
   })
 
-  // Cottage form submit
+  // Chat form
   const form = document.getElementById('cottageForm')
-  if (form) {
-    form.addEventListener('submit', async e => {
-      e.preventDefault()
-      const data = Object.fromEntries(new FormData(form))
-      data.type = 'cottage'
-      data.timestamp = new Date().toISOString()
+  const msgs = document.getElementById('cottageChatMessages')
+  if (!form || !msgs) return
 
-      const btn = form.querySelector('button[type="submit"]')
-      btn.disabled = true
-      btn.textContent = 'Отправка...'
-
-      try {
-        const res = await fetch('/api/contact', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(data)
-        })
-
-        if (res.ok) {
-          form.innerHTML = `
-            <div style="text-align:center;padding:20px 0">
-              <div style="font-size:3rem;margin-bottom:12px;color:var(--gold)">✓</div>
-              <p style="font-size:1.2rem;font-weight:700;color:var(--white);margin-bottom:8px">Заявка отправлена!</p>
-              <p style="color:rgba(250,250,250,.6)">Мы перезвоним вам в ближайшее время</p>
-            </div>`
-        } else {
-          btn.disabled = false
-          btn.textContent = 'Вызвать замерщика'
-          alert('Ошибка отправки. Позвоните нам: +7 (4012) 52-44-20')
-        }
-      } catch {
-        btn.disabled = false
-        btn.textContent = 'Вызвать замерщика'
-        alert('Ошибка сети. Позвоните нам: +7 (4012) 52-44-20')
-      }
-    })
+  const data = {}
+  const serviceNames = {
+    panoramic: 'Панорамные окна',
+    'non-standard': 'Нестандартные формы',
+    full: 'Полное остекление дома',
+    replace: 'Замена старых окон',
+    other: 'Другое'
   }
 
-  // FAB — на коттеджной странице скроллит к форме
+  const addMsg = (text, type = 'bot') => {
+    const div = document.createElement('div')
+    div.className = `chat-msg chat-msg--${type}`
+    div.innerHTML = `<div class="chat-msg__bubble">${text}</div>`
+    msgs.appendChild(div)
+    msgs.scrollTop = msgs.scrollHeight
+  }
+
+  const showStep = n => {
+    form.querySelectorAll('.chat-form__step').forEach(s => s.classList.remove('active'))
+    const step = form.querySelector(`[data-step="${n}"]`)
+    if (step) {
+      step.classList.add('active')
+      const input = step.querySelector('input')
+      if (input) setTimeout(() => input.focus(), 100)
+    }
+  }
+
+  form.querySelectorAll('.chat-option').forEach(btn => {
+    btn.addEventListener('click', () => {
+      data.service = btn.dataset.value
+      addMsg(serviceNames[btn.dataset.value], 'user')
+      setTimeout(() => {
+        addMsg('Отлично! Как вас зовут?')
+        showStep(2)
+      }, 400)
+    })
+  })
+
+  const nameInput = form.querySelector('[data-step="2"] input')
+  const nameBtn = form.querySelector('[data-step="2"] .chat-form__send')
+
+  const submitName = () => {
+    const val = nameInput?.value.trim()
+    if (!val) return
+    data.name = val
+    addMsg(val, 'user')
+    setTimeout(() => {
+      addMsg(`${val}, оставьте номер — мы перезвоним и обсудим ваш проект`)
+      showStep(3)
+    }, 400)
+  }
+
+  nameBtn?.addEventListener('click', submitName)
+  nameInput?.addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); submitName() } })
+
+  form.addEventListener('submit', async e => {
+    e.preventDefault()
+    const phoneInput = form.querySelector('[data-step="3"] input')
+    const phone = phoneInput?.value.trim()
+    if (!phone) return
+
+    data.phone = phone
+    addMsg(phone, 'user')
+    showStep(0)
+
+    const payload = { ...data, type: 'cottage', timestamp: new Date().toISOString() }
+
+    try {
+      const res = await fetch('/api/contact', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      })
+      setTimeout(() => {
+        addMsg(res.ok
+          ? 'Спасибо! Заявка отправлена. Мы перезвоним вам в ближайшее время!'
+          : 'Не удалось отправить. Позвоните нам: +7 (4012) 52-44-20')
+      }, 500)
+    } catch {
+      setTimeout(() => addMsg('Ошибка сети. Позвоните нам: +7 (4012) 52-44-20'), 500)
+    }
+  })
+
   const fab = document.getElementById('fab')
   if (fab) {
     fab.addEventListener('click', () => {
