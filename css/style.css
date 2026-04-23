@@ -127,26 +127,22 @@ button:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible
   height: 72px;
   gap: 24px;
 }
-.logo { display: flex; align-items: baseline; gap: 4px; }
-.logo__number {
-  font-size: 1.8rem;
+.logo { display: flex; align-items: center; }
+.logo__text {
+  font-size: 1.4rem;
   font-weight: 900;
   color: var(--gold);
-}
-.logo__text {
-  font-size: 1.2rem;
-  font-weight: 600;
-  color: var(--white);
   text-transform: uppercase;
-  letter-spacing: 2px;
+  letter-spacing: 3px;
 }
-.nav { display: flex; gap: 24px; }
+.nav { display: flex; gap: 16px; }
 .nav__link {
   color: rgba(250, 250, 250, .7);
-  font-size: .9rem;
+  font-size: .82rem;
   font-weight: 500;
   transition: var(--transition);
   position: relative;
+  white-space: nowrap;
 }
 .nav__link:hover { color: var(--gold); }
 .nav__link::after {
