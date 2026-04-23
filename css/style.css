@@ -187,6 +187,28 @@ button:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible
 .burger.active span:nth-child(2) { opacity: 0; }
 .burger.active span:nth-child(3) { bottom: 50%; transform: translateY(50%) rotate(-45deg); }
 
+/* ========== SERVICE HERO ========== */
+.service-hero {
+  position: relative;
+  min-height: 60vh;
+  display: flex;
+  align-items: center;
+  overflow: hidden;
+  background: var(--dark);
+}
+.service-hero__bg {
+  position: absolute;
+  inset: 0;
+  background: center/cover no-repeat;
+  opacity: .4;
+}
+.service-hero--windows .service-hero__bg { background-image: url('/img/services/plastic-windows.png'); }
+.service-hero--balcony .service-hero__bg { background-image: url('/img/services/balcony.png'); }
+.service-hero--doors .service-hero__bg { background-image: url('/img/services/doors.png'); }
+.service-hero--cottage .service-hero__bg { background-image: url('/img/services/cottage.png'); }
+.service-hero--mosquito .service-hero__bg { background-image: url('/img/services/mosquito.png'); }
+.service-hero--sills .service-hero__bg { background-image: url('/img/services/sills.png'); }
+
 /* ========== HERO ========== */
 .hero {
   position: relative;
