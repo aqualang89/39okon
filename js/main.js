@@ -1,4 +1,63 @@
-document.addEventListener('DOMContentLoaded', () => {
+async function loadComponents() {
+  const headerRoot = document.getElementById('header-root')
+  const footerRoot = document.getElementById('footer-root')
+
+  if (headerRoot) {
+    try {
+      const res = await fetch('/components/header.html')
+      if (res.ok) headerRoot.outerHTML = await res.text()
+    } catch {}
+  }
+  if (footerRoot) {
+    try {
+      const res = await fetch('/components/footer.html')
+      if (res.ok) footerRoot.outerHTML = await res.text()
+    } catch {}
+  }
+}
+
+function setActiveNav() {
+  const path = location.pathname
+  document.querySelectorAll('.nav__link').forEach(link => {
+    const href = link.getAttribute('href')
+    if (!href) return
+    const isActive = href === '/' ? path === '/' : path.startsWith(href.replace(/\.html$/, ''))
+    if (isActive) link.classList.add('nav__link--active')
+  })
+}
+
+async function init() {
+  await loadComponents()
+  setActiveNav()
+
+  // Burger
+  const burger = document.getElementById('burger')
+  const nav = document.getElementById('nav')
+  if (burger && nav) {
+    burger.addEventListener('click', () => {
+      burger.classList.toggle('active')
+      nav.classList.toggle('active')
+      document.body.style.overflow = nav.classList.contains('active') ? 'hidden' : ''
+    })
+    nav.querySelectorAll('.nav__link').forEach(link => {
+      link.addEventListener('click', () => {
+        burger.classList.remove('active')
+        nav.classList.remove('active')
+        document.body.style.overflow = ''
+      })
+    })
+  }
+
+  // Header scroll
+  const header = document.getElementById('header')
+  if (header) {
+    window.addEventListener('scroll', () => {
+      header.style.background = window.scrollY > 50
+        ? 'rgba(26, 26, 46, .98)'
+        : 'rgba(26, 26, 46, .95)'
+    })
+  }
+
   // Rating dots
   document.querySelectorAll('.rating-dots').forEach(el => {
     const filled = +el.dataset.filled
@@ -7,32 +66,6 @@ document.addEventListener('DOMContentLoaded', () => {
       html += `<span style="width:10px;height:10px;border-radius:50%;background:${i < filled ? 'var(--gold)' : 'var(--gray-light)'};display:inline-block"></span>`
     }
     el.innerHTML = html
-  })
-
-  // Burger
-  const burger = document.getElementById('burger')
-  const nav = document.getElementById('nav')
-
-  burger.addEventListener('click', () => {
-    burger.classList.toggle('active')
-    nav.classList.toggle('active')
-    document.body.style.overflow = nav.classList.contains('active') ? 'hidden' : ''
-  })
-
-  nav.querySelectorAll('.nav__link').forEach(link => {
-    link.addEventListener('click', () => {
-      burger.classList.remove('active')
-      nav.classList.remove('active')
-      document.body.style.overflow = ''
-    })
-  })
-
-  // Header scroll
-  const header = document.getElementById('header')
-  window.addEventListener('scroll', () => {
-    header.style.background = window.scrollY > 50
-      ? 'rgba(26, 26, 46, .98)'
-      : 'rgba(26, 26, 46, .95)'
   })
 
   // Counter animation
@@ -45,7 +78,6 @@ document.addEventListener('DOMContentLoaded', () => {
       const target = +el.dataset.count
       const duration = 2000
       const start = performance.now()
-
       const tick = now => {
         const progress = Math.min((now - start) / duration, 1)
         const ease = 1 - Math.pow(1 - progress, 3)
@@ -58,14 +90,21 @@ document.addEventListener('DOMContentLoaded', () => {
     counted = true
   }
 
-  // Fade-in on scroll (fallback for browsers without scroll-timeline)
-  const supportsScrollTimeline = CSS.supports('animation-timeline', 'view()')
+  const heroTrust = document.querySelector('.hero__trust')
+  if (heroTrust) {
+    const obs = new IntersectionObserver(entries => {
+      if (entries[0].isIntersecting) animateCounters()
+    }, { threshold: 0.5 })
+    obs.observe(heroTrust)
+  }
 
-  const observer = new IntersectionObserver((entries) => {
+  // Fade-in on scroll
+  const supportsScrollTimeline = CSS.supports('animation-timeline', 'view()')
+  const fadeObserver = new IntersectionObserver((entries) => {
     entries.forEach(entry => {
       if (entry.isIntersecting) {
         entry.target.classList.add('visible')
-        observer.unobserve(entry.target)
+        fadeObserver.unobserve(entry.target)
       }
     })
   }, { threshold: 0.1 })
@@ -75,16 +114,9 @@ document.addEventListener('DOMContentLoaded', () => {
       el.classList.add('scroll-reveal')
     } else {
       el.classList.add('fade-in')
-      observer.observe(el)
+      fadeObserver.observe(el)
     }
   })
-
-  // Counter trigger
-  const heroObserver = new IntersectionObserver(entries => {
-    if (entries[0].isIntersecting) animateCounters()
-  }, { threshold: 0.5 })
-  const heroTrust = document.querySelector('.hero__trust')
-  if (heroTrust) heroObserver.observe(heroTrust)
 
   // Reviews slider
   const track = document.querySelector('.reviews__track')
@@ -98,7 +130,6 @@ document.addEventListener('DOMContentLoaded', () => {
       const visible = window.innerWidth <= 768 ? 1 : window.innerWidth <= 1024 ? 2 : 3
       return Math.max(0, cards.length - visible)
     }
-
     const slide = () => {
       const gap = 24
       const cardWidth = cards[0].offsetWidth + gap
@@ -106,11 +137,9 @@ document.addEventListener('DOMContentLoaded', () => {
       prevBtn.style.opacity = idx === 0 ? '.3' : '1'
       nextBtn.style.opacity = idx >= getMaxIdx() ? '.3' : '1'
     }
-
     prevBtn.addEventListener('click', () => { if (idx > 0) { idx--; slide() } })
     nextBtn.addEventListener('click', () => { if (idx < getMaxIdx()) { idx++; slide() } })
 
-    // Touch swipe
     let startX = 0
     track.addEventListener('touchstart', e => { startX = e.touches[0].clientX }, { passive: true })
     track.addEventListener('touchend', e => {
@@ -170,19 +199,14 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     }
 
-    // Step 1: service selection
     chatForm.querySelectorAll('.chat-option').forEach(btn => {
       btn.addEventListener('click', () => {
         formData.service = btn.dataset.value
         addMsg(serviceNames[btn.dataset.value], 'user')
-        setTimeout(() => {
-          addMsg('Отлично! Как вас зовут?')
-          showStep(2)
-        }, 400)
+        setTimeout(() => { addMsg('Отлично! Как вас зовут?'); showStep(2) }, 400)
       })
     })
 
-    // Step 2: name
     const step2send = chatForm.querySelector('[data-step="2"] .chat-form__send')
     const nameInput = chatForm.querySelector('[data-step="2"] input')
 
@@ -200,32 +224,25 @@ document.addEventListener('DOMContentLoaded', () => {
     step2send?.addEventListener('click', submitName)
     nameInput?.addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); submitName() } })
 
-    // Step 3: phone + submit
     chatForm.addEventListener('submit', async e => {
       e.preventDefault()
       const phoneInput = chatForm.querySelector('[data-step="3"] input')
       const phone = phoneInput?.value.trim()
       if (!phone) return
-
       formData.phone = phone
       addMsg(phone, 'user')
-      showStep(0) // hide input
+      showStep(0)
 
       const data = { ...formData, type: 'contact', timestamp: new Date().toISOString() }
-
       try {
         const res = await fetch('/api/contact', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(data)
         })
-
         setTimeout(() => {
-          if (res.ok) {
-            addMsg('Спасибо! Заявка отправлена. Мы перезвоним вам в ближайшее время!')
-          } else {
-            addMsg('Не удалось отправить. Позвоните нам: +7 (4012) 52-44-20')
-          }
+          if (res.ok) addMsg('Спасибо! Заявка отправлена. Мы перезвоним вам в ближайшее время!')
+          else addMsg('Не удалось отправить. Позвоните нам: +7 (4012) 52-44-20')
         }, 500)
       } catch {
         setTimeout(() => addMsg('Ошибка сети. Позвоните нам: +7 (4012) 52-44-20'), 500)
@@ -247,7 +264,6 @@ document.addEventListener('DOMContentLoaded', () => {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(data)
       })
-
       if (res.ok) {
         form.innerHTML = `
           <div class="form-success">
@@ -262,4 +278,6 @@ document.addEventListener('DOMContentLoaded', () => {
       alert('Ошибка сети. Позвоните нам: +7 (4012) 52-44-20')
     }
   })
-})
+}
+
+init()

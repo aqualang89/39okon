@@ -1,4 +1,7 @@
 {
+  "redirects": [
+    { "source": "/cottage.html", "destination": "/services/cottage.html", "permanent": true }
+  ],
   "headers": [
     {
       "source": "/(.*)",

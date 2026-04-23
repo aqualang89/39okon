@@ -158,6 +158,8 @@ button:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible
   transition: var(--transition);
 }
 .nav__link:hover::after { width: 100%; }
+.nav__link--active { color: var(--gold) !important; }
+.nav__link--active::after { width: 100% !important; }
 
 .header__phone {
   color: var(--white);

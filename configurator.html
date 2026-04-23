@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Конфигуратор пластиковых окон онлайн. Соберите своё окно и рассчитайте стоимость.">
+  <meta name="keywords" content="конфигуратор окон, рассчитать стоимость окон, онлайн калькулятор окон">
+  <meta name="robots" content="index, follow">
+  <meta property="og:title" content="Конфигуратор окон — 39 Окон">
+  <meta property="og:description" content="Соберите окно онлайн и узнайте цену.">
+  <title>Конфигуратор окон — 39 Окон</title>
+  <link rel="icon" type="image/svg+xml" href="/img/favicon.svg">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap">
+  <link rel="stylesheet" href="/css/style.css?v=6">
+</head>
+<body>
+  <a href="#main" class="skip-nav">Перейти к содержимому</a>
+  <div id="header-root"></div>
+
+  <main id="main">
+    <section class="hero" style="min-height: 40vh;">
+      <div class="hero__bg" style="opacity:.3"></div>
+      <div class="hero__overlay"></div>
+      <div class="hero__vignette"></div>
+      <div class="container hero__content">
+        <h1 class="hero__title">Конфигуратор окна</h1>
+        <p class="hero__subtitle">Соберите своё идеальное окно и узнайте примерную стоимость</p>
+      </div>
+    </section>
+
+    <section class="configurator" id="configurator">
+      <div class="container">
+        <div class="configurator__wrap">
+          <div class="configurator__preview">
+            <svg id="windowSvg" viewBox="0 0 500 620" class="configurator__svg"></svg>
+          </div>
+          <div class="configurator__controls">
+            <div class="config-group">
+              <label class="config-label">Тип окна</label>
+              <div class="config-options" id="windowType">
+                <button class="config-btn active" data-value="single">Одностворчатое</button>
+                <button class="config-btn" data-value="double">Двустворчатое</button>
+                <button class="config-btn" data-value="triple">Трёхстворчатое</button>
+                <button class="config-btn" data-value="balcony">Балконный блок</button>
+              </div>
+            </div>
+            <div class="config-group">
+              <label class="config-label">Тип открывания</label>
+              <div class="config-options" id="openType">
+                <button class="config-btn active" data-value="tilt-turn">Поворотно-откидное</button>
+                <button class="config-btn" data-value="turn">Поворотное</button>
+                <button class="config-btn" data-value="fixed">Глухое</button>
+              </div>
+            </div>
+            <div class="config-group">
+              <label class="config-label">Цвет ламинации</label>
+              <div class="config-colors" id="windowColor">
+                <button class="color-btn active" data-value="white" data-color="#FFFFFF" title="Белый"><span style="background:#FFFFFF"></span></button>
+                <button class="color-btn" data-value="golden-oak" data-color="#B8860B" title="Золотой дуб"><span style="background:#B8860B"></span></button>
+                <button class="color-btn" data-value="walnut" data-color="#5C4033" title="Орех"><span style="background:#5C4033"></span></button>
+                <button class="color-btn" data-value="mahogany" data-color="#6B1C23" title="Махагон"><span style="background:#6B1C23"></span></button>
+                <button class="color-btn" data-value="moraine-oak" data-color="#3E2C1C" title="Морёный дуб"><span style="background:#3E2C1C"></span></button>
+                <button class="color-btn" data-value="anthracite" data-color="#383838" title="Антрацит"><span style="background:#383838"></span></button>
+              </div>
+            </div>
+            <div class="config-group">
+              <label class="config-label">Цвет ручки</label>
+              <div class="config-colors" id="handleColor">
+                <button class="color-btn active" data-value="silver" data-color="#C0C0C0" title="Серебро"><span style="background:linear-gradient(135deg,#D8D8D8,#A0A0A0)"></span></button>
+                <button class="color-btn" data-value="gold" data-color="#C5A54E" title="Золото"><span style="background:linear-gradient(135deg,#D4B85A,#A08030)"></span></button>
+                <button class="color-btn" data-value="bronze" data-color="#8B6914" title="Бронза"><span style="background:linear-gradient(135deg,#A07820,#6B5010)"></span></button>
+                <button class="color-btn" data-value="black" data-color="#333333" title="Чёрный"><span style="background:linear-gradient(135deg,#444,#222)"></span></button>
+                <button class="color-btn" data-value="white" data-color="#F0F0F0" title="Белый"><span style="background:#F0F0F0"></span></button>
+              </div>
+            </div>
+            <div class="config-group">
+              <label class="config-label">Цвет подоконника</label>
+              <div class="config-colors" id="sillColor">
+                <button class="color-btn active" data-value="white" data-color="#FFFFFF" title="Белый"><span style="background:#FFFFFF"></span></button>
+                <button class="color-btn" data-value="marble" data-color="#E8DFD0" title="Мрамор"><span style="background:linear-gradient(135deg,#EDE5D8,#D5CCBE)"></span></button>
+                <button class="color-btn" data-value="golden-oak" data-color="#B8860B" title="Золотой дуб"><span style="background:#B8860B"></span></button>
+                <button class="color-btn" data-value="walnut" data-color="#5C4033" title="Орех"><span style="background:#5C4033"></span></button>
+                <button class="color-btn" data-value="anthracite" data-color="#383838" title="Антрацит"><span style="background:#383838"></span></button>
+                <button class="color-btn" data-value="wenge" data-color="#3C2415" title="Венге"><span style="background:#3C2415"></span></button>
+              </div>
+            </div>
+            <div class="config-group">
+              <label class="config-label">Цвет откосов</label>
+              <div class="config-colors" id="slopeColor">
+                <button class="color-btn active" data-value="white" data-color="#F0F0F0" title="Белый"><span style="background:#F0F0F0"></span></button>
+                <button class="color-btn" data-value="cream" data-color="#F5F0E0" title="Кремовый"><span style="background:#F5F0E0"></span></button>
+                <button class="color-btn" data-value="light-gray" data-color="#D5D5D5" title="Светло-серый"><span style="background:#D5D5D5"></span></button>
+                <button class="color-btn" data-value="match" data-color="match" title="Под цвет рамы"><span style="background:linear-gradient(135deg,#ccc,#999);font-size:10px;display:flex;align-items:center;justify-content:center;color:#555">≈</span></button>
+              </div>
+            </div>
+            <div class="config-group">
+              <label class="config-label">Ширина: <span id="widthVal">1400</span> мм</label>
+              <input type="range" class="config-range" id="windowWidth" min="400" max="3000" value="1400" step="50">
+            </div>
+            <div class="config-group">
+              <label class="config-label">Высота: <span id="heightVal">1400</span> мм</label>
+              <input type="range" class="config-range" id="windowHeight" min="400" max="2500" value="1400" step="50">
+            </div>
+            <div class="config-group">
+              <label class="config-label">Тариф</label>
+              <div class="config-options" id="windowTariff">
+                <button class="config-btn" data-value="economy" data-price="3300">Эконом</button>
+                <button class="config-btn active" data-value="standard" data-price="3800">Стандарт</button>
+                <button class="config-btn" data-value="premium" data-price="5900">Максимум</button>
+              </div>
+            </div>
+            <div class="configurator__result">
+              <div class="config-price">
+                <span class="config-price__label">Примерная стоимость:</span>
+                <span class="config-price__value" id="configPrice">7 448 ₽</span>
+              </div>
+              <button class="btn btn--primary btn--full" id="configOrder">Заказать этот вариант</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <div id="footer-root"></div>
+  <script src="/js/main.js?v=3"></script>
+  <script src="/js/configurator.js?v=2"></script>
+</body>
+</html>

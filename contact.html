@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Контакты 39 Окон в Калининграде. Адрес: ул. Ялтинская, 66. Телефон: +7 (4012) 52-44-20. Ежедневно 9:00 — 21:00.">
+  <title>Контакты — 39 Окон</title>
+  <link rel="icon" type="image/svg+xml" href="/img/favicon.svg">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap">
+  <link rel="stylesheet" href="/css/style.css?v=6">
+</head>
+<body>
+  <a href="#main" class="skip-nav">Перейти к содержимому</a>
+  <div id="header-root"></div>
+
+  <main id="main">
+    <section class="hero" style="min-height: 50vh;">
+      <div class="hero__bg" style="opacity:.3"></div>
+      <div class="hero__overlay"></div>
+      <div class="hero__vignette"></div>
+      <div class="container hero__content">
+        <h1 class="hero__title">Свяжитесь с нами</h1>
+        <p class="hero__subtitle">Оставьте заявку и мы перезвоним в течение 15 минут</p>
+      </div>
+    </section>
+
+    <section class="contact" id="contact">
+      <div class="container">
+        <div class="contact__grid">
+          <form class="chat-form" id="contactForm">
+            <div class="chat-form__messages" id="chatMessages">
+              <div class="chat-msg chat-msg--bot">
+                <div class="chat-msg__bubble">Здравствуйте! Чем могу помочь? Выберите, что вас интересует:</div>
+              </div>
+            </div>
+            <div class="chat-form__step active" data-step="1">
+              <div class="chat-form__options">
+                <button type="button" class="chat-option" data-value="windows">Пластиковые окна</button>
+                <button type="button" class="chat-option" data-value="balcony">Остекление балкона</button>
+                <button type="button" class="chat-option" data-value="doors">Пластиковые двери</button>
+                <button type="button" class="chat-option" data-value="cottage">Остекление коттеджа</button>
+                <button type="button" class="chat-option" data-value="other">Другое</button>
+              </div>
+            </div>
+            <div class="chat-form__step" data-step="2">
+              <input type="text" name="name" class="chat-form__input" placeholder="Как вас зовут?" autocomplete="name">
+              <button type="button" class="chat-form__send" aria-label="Отправить">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M5 12h14M12 5l7 7-7 7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              </button>
+            </div>
+            <div class="chat-form__step" data-step="3">
+              <input type="tel" name="phone" class="chat-form__input" placeholder="Номер телефона" autocomplete="tel">
+              <button type="submit" class="chat-form__send" aria-label="Отправить">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M5 12h14M12 5l7 7-7 7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              </button>
+            </div>
+          </form>
+          <div class="contact__info">
+            <div class="contact__item">
+              <h3>Адрес</h3>
+              <p>г. Калининград, ул. Ялтинская, 66</p>
+            </div>
+            <div class="contact__item">
+              <h3>Телефон</h3>
+              <p><a href="tel:+74012524420">+7 (4012) 52-44-20</a></p>
+              <p><a href="tel:+79506704006">+7 (950) 670-40-06</a></p>
+            </div>
+            <div class="contact__item">
+              <h3>Email</h3>
+              <p><a href="mailto:info@39okon.com">info@39okon.com</a></p>
+            </div>
+            <div class="contact__item">
+              <h3>Режим работы</h3>
+              <p>Ежедневно 9:00 — 21:00</p>
+            </div>
+            <div class="contact__socials">
+              <a href="https://t.me/kld39okon" class="contact__social" aria-label="Telegram" target="_blank" rel="noopener">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm4.64 6.8c-.15 1.58-.8 5.42-1.13 7.19-.14.75-.42 1-.68 1.03-.58.05-1.02-.38-1.58-.75-.88-.58-1.38-.94-2.23-1.5-.99-.65-.35-1.01.22-1.59.15-.15 2.71-2.48 2.76-2.69a.2.2 0 00-.05-.18c-.06-.05-.14-.03-.21-.02-.09.02-1.49.95-4.22 2.79-.4.27-.76.41-1.08.4-.36-.01-1.04-.2-1.55-.37-.63-.2-1.12-.31-1.08-.66.02-.18.27-.36.74-.55 2.92-1.27 4.86-2.11 5.83-2.51 2.78-1.16 3.35-1.36 3.73-1.36.08 0 .27.02.39.12.1.08.13.19.14.27-.01.06.01.24 0 .38z"/></svg>
+              </a>
+              <a href="https://vk.ru/39okon" class="contact__social" aria-label="ВКонтакте" target="_blank" rel="noopener">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.477 2 2 6.477 2 12s4.477 10 10 10 10-4.477 10-10S17.523 2 12 2zm5.01 14h-1.468c-.553 0-.724-.448-1.717-1.46-.866-.836-1.229-.948-1.444-.948-.3 0-.387.086-.387.5v1.333c0 .357-.114.575-1.052.575-1.553 0-3.275-.94-4.484-2.692-1.82-2.565-2.317-4.49-2.317-4.886 0-.215.086-.414.5-.414h1.468c.375 0 .517.166.66.557.73 2.1 1.95 3.937 2.45 3.937.187 0 .274-.086.274-.557V9.43c-.057-1-.582-1.086-.582-1.443 0-.166.14-.343.365-.343h2.308c.317 0 .43.172.43.543v2.923c0 .317.143.43.228.43.187 0 .344-.114.688-.457 1.063-1.186 1.82-3.015 1.82-3.015.1-.215.272-.414.648-.414h1.468c.443 0 .54.228.443.543-.186.866-2 3.415-2 3.415-.157.257-.215.372 0 .66.157.214.66.66 1 1.072.63.743 1.1 1.37 1.228 1.8.143.414-.072.628-.514.628z"/></svg>
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <div id="footer-root"></div>
+  <script src="/js/main.js?v=3"></script>
+</body>
+</html>
