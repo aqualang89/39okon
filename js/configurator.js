@@ -7,10 +7,7 @@ document.addEventListener('DOMContentLoaded', () => {
     open: 'tilt-turn',
     color: '#FFFFFF',
     colorName: 'white',
-    handleColor: '#C0C0C0',
-    sillColor: '#FFFFFF',
-    slopeColor: '#F0F0F0',
-    slopeMatch: false,
+
     width: 1400,
     height: 1400,
     tariff: 3800
@@ -61,9 +58,6 @@ document.addEventListener('DOMContentLoaded', () => {
   bind('openType', 'open')
   bind('windowTariff', 'tariff')
   bindColors('windowColor', 'color')
-  bindColors('handleColor', 'handleColor')
-  bindColors('sillColor', 'sillColor')
-  bindColors('slopeColor', 'slopeColor')
 
   const widthSlider = document.getElementById('windowWidth')
   const heightSlider = document.getElementById('windowHeight')
@@ -88,7 +82,7 @@ document.addEventListener('DOMContentLoaded', () => {
     let multiplier = 1
     if (state.type === 'double') multiplier = 1.3
     if (state.type === 'triple') multiplier = 1.7
-    if (state.type === 'balcony') multiplier = 1.5
+    if (state.type === 'balcony-door') multiplier = 1.4
     if (state.colorName !== 'white') multiplier *= 1.15
     const price = Math.round(area * state.tariff * multiplier)
     document.getElementById('configPrice').textContent = price.toLocaleString('ru') + ' ₽'
@@ -107,18 +101,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const frameDark = isWhite ? '#CCCCCC' : darken(state.color, 35)
     const frameLight = isWhite ? '#FFFFFF' : lighten(state.color, 25)
     const frameMid = isWhite ? '#D8D8D8' : darken(state.color, 15)
-
-    const slopeBase = state.slopeMatch ? frameColor : state.slopeColor
-    const slopeDark = darken(slopeBase, 25)
-    const sillBase = state.sillColor
-    const sillDark = darken(sillBase, 30)
-    const sillLight = lighten(sillBase, 20)
-    const sillMid = darken(sillBase, 12)
-
-    const handleBase = state.handleColor
-    const handleDark = darken(handleBase, 40)
-    const handleLight = lighten(handleBase, 30)
-    const handleMid = darken(handleBase, 15)
 
     const ox = 30
     const oy = 20
@@ -148,30 +130,6 @@ document.addEventListener('DOMContentLoaded', () => {
         <stop offset="40%" stop-color="rgba(255,255,255,.08)"/>
         <stop offset="100%" stop-color="rgba(255,255,255,0)"/>
       </linearGradient>
-      <linearGradient id="slopLeft" x1="1" y1="0" x2="0" y2="0">
-        <stop offset="0%" stop-color="${slopeBase}"/>
-        <stop offset="100%" stop-color="${slopeDark}"/>
-      </linearGradient>
-      <linearGradient id="slopRight" x1="0" y1="0" x2="1" y2="0">
-        <stop offset="0%" stop-color="${slopeBase}"/>
-        <stop offset="100%" stop-color="${slopeDark}"/>
-      </linearGradient>
-      <linearGradient id="slopTop" x1="0" y1="1" x2="0" y2="0">
-        <stop offset="0%" stop-color="${slopeBase}"/>
-        <stop offset="100%" stop-color="${slopeDark}"/>
-      </linearGradient>
-      <linearGradient id="sillTop" x1="0" y1="0" x2="0" y2="1">
-        <stop offset="0%" stop-color="${sillLight}"/>
-        <stop offset="100%" stop-color="${sillMid}"/>
-      </linearGradient>
-      <linearGradient id="sillFront" x1="0" y1="0" x2="0" y2="1">
-        <stop offset="0%" stop-color="${sillMid}"/>
-        <stop offset="100%" stop-color="${sillDark}"/>
-      </linearGradient>
-      <linearGradient id="handleFill" x1="0" y1="0" x2="1" y2="1">
-        <stop offset="0%" stop-color="${handleLight}"/>
-        <stop offset="100%" stop-color="${handleBase}"/>
-      </linearGradient>
       <filter id="softShadow">
         <feDropShadow dx="0" dy="6" stdDeviation="10" flood-color="rgba(0,0,0,.18)"/>
       </filter>
@@ -186,18 +144,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const winW = newW - pad * 2
     const winH = newH - pad * 2
-
-    // Откосы
-    html += `<polygon points="${ox - 12},${oy - 10} ${ox + newW + 12},${oy - 10} ${ox + newW},${oy} ${ox},${oy}" fill="url(#slopTop)" stroke="${slopeDark}" stroke-width="0.5"/>`
-    html += `<polygon points="${ox - 12},${oy - 10} ${ox},${oy} ${ox},${oy + newH} ${ox - 12},${oy + newH + 10}" fill="url(#slopLeft)" stroke="${slopeDark}" stroke-width="0.5"/>`
-    html += `<polygon points="${ox + newW + 12},${oy - 10} ${ox + newW},${oy} ${ox + newW},${oy + newH} ${ox + newW + 12},${oy + newH + 10}" fill="url(#slopRight)" stroke="${slopeDark}" stroke-width="0.5"/>`
-
-    // Блик на откосах
-    html += `<polygon points="${ox - 10},${oy - 6} ${ox + newW * 0.3},${oy - 6} ${ox + newW * 0.3 - 4},${oy} ${ox},${oy}" fill="rgba(255,255,255,.2)"/>`
-    html += `<polygon points="${ox - 10},${oy - 4} ${ox},${oy + 4} ${ox},${oy + newH * 0.3} ${ox - 10},${oy + newH * 0.3 + 6}" fill="rgba(255,255,255,.15)"/>`
-
-    // Тень от откосов
-    html += `<rect x="${ox - 14}" y="${oy - 12}" width="${newW + 28}" height="${newH + 24}" rx="2" fill="none" stroke="rgba(0,0,0,.05)" stroke-width="3"/>`
 
     // Рама
     html += `<rect x="${ox}" y="${oy}" width="${newW}" height="${newH}" rx="3" fill="url(#frameFill)" stroke="${frameDark}" stroke-width="1.5" filter="url(#softShadow)"/>`
@@ -230,31 +176,8 @@ document.addEventListener('DOMContentLoaded', () => {
         drawOpenIndicator(pane, openType, frameDark)
       }
 
-      // Ручка
-      if (!pane.fixed) {
-        drawHandle(pane, handleDark, handleMid, handleLight, handleBase)
-      }
+
     })
-
-    // Подоконник
-    const sillY = oy + newH
-    const sillOverhang = 22
-    const sillDepth = 16
-    const sillFrontH = 12
-    const sillX = ox - sillOverhang
-    const sillW = newW + sillOverhang * 2
-
-    html += `<polygon points="${sillX + 6},${sillY} ${sillX + sillW - 6},${sillY} ${sillX + sillW},${sillY + sillDepth} ${sillX},${sillY + sillDepth}" fill="url(#sillTop)" stroke="${sillDark}" stroke-width="0.8"/>`
-    html += `<rect x="${sillX}" y="${sillY + sillDepth}" width="${sillW}" height="${sillFrontH}" rx="1" fill="url(#sillFront)" stroke="${sillDark}" stroke-width="0.5"/>`
-
-    // Блик на подоконнике
-    html += `<rect x="${sillX + 10}" y="${sillY + 2}" width="${sillW * 0.35}" height="${sillDepth - 4}" rx="1" fill="rgba(255,255,255,.3)"/>`
-
-    // Капельник
-    html += `<line x1="${sillX + 2}" y1="${sillY + sillDepth + sillFrontH}" x2="${sillX + sillW - 2}" y2="${sillY + sillDepth + sillFrontH}" stroke="${sillDark}" stroke-width="1.5" stroke-linecap="round"/>`
-
-    // Тень
-    html += `<ellipse cx="${ox + newW / 2}" cy="${sillY + sillDepth + sillFrontH + 6}" rx="${sillW * 0.42}" ry="4" fill="rgba(0,0,0,.08)"/>`
 
     svg.innerHTML = html
 
@@ -312,13 +235,8 @@ document.addEventListener('DOMContentLoaded', () => {
           { x: x + pw * 2 + gap * 2, y, w: pw, h, handleSide: 'left' }
         ]
       }
-      case 'balcony': {
-        const doorW = w * 0.4
-        const winW = w - doorW - gap
-        return [
-          { x, y, w: winW, h, fixed: true },
-          { x: x + winW + gap, y, w: doorW, h, handleSide: 'left', openOverride: 'turn' }
-        ]
+      case 'balcony-door': {
+        return [{ x, y, w, h, handleSide: 'left', openOverride: 'turn' }]
       }
       default:
         return [{ x, y, w, h, handleSide: 'right' }]
