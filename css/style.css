@@ -20,7 +20,7 @@
 
 html {
   scroll-behavior: smooth;
-  scroll-padding-top: 80px;
+  scroll-padding-top: 120px;
   background: var(--dark);
   overscroll-behavior-y: contain;
   -webkit-overflow-scrolling: touch;
@@ -120,22 +120,36 @@ button:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible
   border-bottom: 1px solid rgba(239, 192, 123, .1);
   transition: var(--transition);
 }
-.header__inner {
+.header__top {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  height: 72px;
-  gap: 24px;
+  padding: 12px 0;
+  gap: 16px;
 }
 .logo { display: flex; align-items: center; }
 .logo__text {
-  font-size: 1.4rem;
+  font-size: 1.5rem;
   font-weight: 900;
   color: var(--gold);
   text-transform: uppercase;
   letter-spacing: 3px;
 }
-.nav { display: flex; gap: 16px; }
+.logo__sub {
+  font-size: .8rem;
+  font-weight: 600;
+  color: var(--white);
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  margin-left: 4px;
+}
+.nav {
+  display: flex;
+  gap: 16px;
+  justify-content: center;
+  padding: 8px 0 12px;
+  border-top: 1px solid rgba(239, 192, 123, .08);
+}
 .nav__link {
   color: rgba(250, 250, 250, .7);
   font-size: .82rem;
@@ -159,8 +173,9 @@ button:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible
 
 .header__phone {
   color: var(--white);
-  font-weight: 600;
-  font-size: .95rem;
+  font-weight: 700;
+  font-size: 1.25rem;
+  white-space: nowrap;
   transition: var(--transition);
 }
 .header__phone:hover { color: var(--gold); }
@@ -1068,7 +1083,7 @@ button:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible
     height: 100vh;
     background: var(--dark);
     flex-direction: column;
-    padding: 100px 32px 32px;
+    padding: 120px 32px 32px;
     gap: 0;
     transition: right .4s ease;
     box-shadow: -10px 0 30px rgba(0,0,0,.3);
@@ -1086,7 +1101,7 @@ button:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible
   .header__phone { display: none; }
 
   .hero__title { font-size: clamp(2rem, 8vw, 3.5rem); }
-  .hero__content { padding: 100px 0 60px; }
+  .hero__content { padding: 120px 0 60px; }
   .hero__trust { gap: 20px; flex-wrap: wrap; }
   .hero__stat-num { font-size: 1.8rem; }
 
