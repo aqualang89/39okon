@@ -10,7 +10,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     width: 1400,
     height: 1400,
-    tariff: 3800
+    tariff: 8300
   }
 
   const bind = (containerId, key) => {
