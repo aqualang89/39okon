@@ -1341,6 +1341,68 @@ button:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible
   line-height: 1.4;
 }
 
+.promotions {
+  padding: 80px 0;
+}
+.promotions__grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 24px;
+  margin-top: 40px;
+}
+.promo-card {
+  background: var(--dark-2);
+  border: 1px solid rgba(250,250,250,.1);
+  border-radius: var(--radius);
+  padding: 32px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+.promo-card--discount {
+  border-color: var(--gold);
+  background: linear-gradient(135deg, var(--dark-2) 0%, rgba(239,192,123,.08) 100%);
+}
+.promo-card__badge {
+  display: inline-block;
+  padding: 4px 12px;
+  border-radius: 100px;
+  background: rgba(250,250,250,.1);
+  color: var(--white);
+  font-size: .75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-bottom: 16px;
+}
+.promo-card__badge--fire {
+  background: rgba(239,192,123,.15);
+  color: var(--gold);
+}
+.promo-card__title {
+  color: var(--white);
+  font-size: 1.25rem;
+  font-weight: 700;
+  line-height: 1.3;
+  margin-bottom: 12px;
+}
+.promo-card__discount {
+  font-size: 3.5rem;
+  font-weight: 800;
+  color: var(--gold);
+  line-height: 1;
+  margin: 8px 0 4px;
+}
+.promo-card__text {
+  color: var(--gray);
+  font-size: .95rem;
+  line-height: 1.5;
+}
+@media (max-width: 768px) {
+  .promotions__grid { grid-template-columns: 1fr; }
+  .promo-card__discount { font-size: 2.5rem; }
+}
+
 /* Touch devices: убираем hover-эффекты, ускоряем анимации */
 @media (hover: none) {
   .service-card:hover,
