@@ -1588,6 +1588,57 @@ button:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible
   .mounting__grid { grid-template-columns: 1fr; }
 }
 
+.window-guide {
+  background: var(--dark);
+}
+.window-guide__header {
+  text-align: center;
+  max-width: 860px;
+  margin: 0 auto 48px;
+}
+.window-guide__grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 24px;
+}
+.window-guide__card {
+  background: var(--dark-2);
+  border: 1px solid rgba(250,250,250,.08);
+  border-radius: var(--radius);
+  padding: 32px;
+  transition: var(--transition);
+}
+.window-guide__card:hover {
+  border-color: rgba(239,192,123,.2);
+  transform: translateY(-4px);
+}
+.window-guide__icon {
+  width: 48px;
+  height: 48px;
+  color: var(--gold);
+  margin-bottom: 16px;
+}
+.window-guide__icon svg {
+  width: 100%;
+  height: 100%;
+}
+.window-guide__title {
+  color: var(--white);
+  font-size: 1.05rem;
+  font-weight: 700;
+  margin-bottom: 10px;
+  text-transform: uppercase;
+  letter-spacing: .5px;
+}
+.window-guide__text {
+  color: rgba(250,250,250,.6);
+  font-size: .88rem;
+  line-height: 1.55;
+}
+@media (max-width: 768px) {
+  .window-guide__grid { grid-template-columns: 1fr; }
+}
+
 /* Touch devices: убираем hover-эффекты, ускоряем анимации */
 @media (hover: none) {
   .service-card:hover,
