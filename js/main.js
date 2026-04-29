@@ -98,6 +98,54 @@ async function init() {
     obs.observe(heroTrust)
   }
 
+  // Hero parallax — из Истории улиц
+  const heroBg = document.querySelector('.hero__bg')
+  const heroContent = document.querySelector('.hero__content')
+  if (heroBg || heroContent) {
+    let ticking = false
+    let lastScrollY = 0
+    let currentBg = 0
+    let currentContent = 0
+    let currentOpacity = 1
+    const lerp = (c, t, e) => c + (t - c) * e
+    const updateParallax = () => {
+      const targetBg = lastScrollY * 0.04
+      const targetContent = lastScrollY * 0.08
+      const targetOpacity = Math.max(0, 1 - lastScrollY / 500)
+      currentBg = lerp(currentBg, targetBg, 0.08)
+      currentContent = lerp(currentContent, targetContent, 0.08)
+      currentOpacity = lerp(currentOpacity, targetOpacity, 0.08)
+      if (heroBg) heroBg.style.transform = `translateY(${currentBg}px) scale(1.05)`
+      if (heroContent) {
+        heroContent.style.transform = `translateY(${currentContent}px)`
+        heroContent.style.opacity = currentOpacity
+      }
+      if (Math.abs(currentBg - targetBg) > 0.1 || Math.abs(currentContent - targetContent) > 0.1) {
+        requestAnimationFrame(updateParallax)
+      } else {
+        ticking = false
+      }
+    }
+    window.addEventListener('scroll', () => {
+      lastScrollY = window.scrollY
+      if (!ticking) { ticking = true; requestAnimationFrame(updateParallax) }
+    }, { passive: true })
+  }
+
+  // Reveal animations — из Истории улиц
+  const revealObserver = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('visible')
+        revealObserver.unobserve(entry.target)
+      }
+    })
+  }, { threshold: 0.12, rootMargin: '0px 0px -40px 0px' })
+
+  document.querySelectorAll('.reveal, .reveal-left, .reveal-right, .reveal-scale').forEach(el => {
+    revealObserver.observe(el)
+  })
+
   // Fade-in on scroll
   const supportsScrollTimeline = CSS.supports('animation-timeline', 'view()')
   const fadeObserver = new IntersectionObserver((entries) => {
