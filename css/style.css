@@ -1535,6 +1535,59 @@ button:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible
   .window-features__grid { grid-template-columns: 1fr; }
 }
 
+.mounting {
+  background: var(--dark);
+}
+.mounting__header {
+  text-align: center;
+  max-width: 800px;
+  margin: 0 auto 48px;
+}
+.mounting__grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 24px;
+}
+.mounting__card {
+  background: var(--dark-2);
+  border: 1px solid rgba(250,250,250,.08);
+  border-radius: var(--radius);
+  padding: 28px;
+  transition: var(--transition);
+}
+.mounting__card:hover {
+  border-color: rgba(239,192,123,.2);
+  transform: translateY(-4px);
+}
+.mounting__icon {
+  width: 48px;
+  height: 48px;
+  color: var(--gold);
+  margin-bottom: 16px;
+}
+.mounting__icon svg {
+  width: 100%;
+  height: 100%;
+}
+.mounting__title {
+  color: var(--white);
+  font-size: 1rem;
+  font-weight: 700;
+  margin-bottom: 8px;
+}
+.mounting__text {
+  color: rgba(250,250,250,.6);
+  font-size: .85rem;
+  line-height: 1.5;
+}
+@media (max-width: 768px) {
+  .mounting__grid { grid-template-columns: 1fr 1fr; gap: 16px; }
+  .mounting__card { padding: 20px; }
+}
+@media (max-width: 480px) {
+  .mounting__grid { grid-template-columns: 1fr; }
+}
+
 /* Touch devices: убираем hover-эффекты, ускоряем анимации */
 @media (hover: none) {
   .service-card:hover,
